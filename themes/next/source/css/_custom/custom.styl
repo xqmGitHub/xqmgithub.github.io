@@ -1,0 +1,38 @@
+// Custom styles.
+
+.post-block {
+    width: 95%;
+    margin: 0 auto;
+}
+// 主页文章添加阴影效果
+ .post:hover {
+   -webkit-box-shadow: 0 15px 30px rgba(0,0,0,.1);
+    box-shadow: 0 15px 30px rgba(0,0,0,.1);
+    -webkit-transform: translate3d(0,-2px,0);
+    transform: translate3d(0,-2px,0);
+    border-radius: 2px;
+  }
+  div#posts .post:hover {
+  -webkit-box-shadow: 0 0 0;
+    box-shadow: 0 0 0;
+    -webkit-transform: 0 0 0;
+    transform: translate3d(0, 0, 0);
+    border-radius: 0px;
+  }
+
+// 自定义页脚跳动的心样式
+@keyframes heartAnimate {
+    0%,100%{transform:scale(1);}
+    10%,30%{transform:scale(0.9);}
+    20%,40%,60%,80%{transform:scale(1.1);}
+    50%,70%{transform:scale(1.1);}
+}
+#heart {
+    animation: heartAnimate 1.33s ease-in-out infinite;
+}
+.with-love {
+    color: rgb(255, 113, 168);
+}
+
+//来必力评论 底部版权
+#container #footer div.livere-com{display: none;}
