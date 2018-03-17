@@ -6,7 +6,7 @@
 title: 点点滴滴
 subtitle:
 description: 点点滴滴,重在积累。
-author: Xion
+author: Xiong
 language: zh-Hans
 timezone:
 
