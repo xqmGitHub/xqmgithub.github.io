@@ -5,6 +5,37 @@ body {
 a:hover {
    cursor: url(../images/sinister.png), auto;
 }
+
+
+::-webkit-scrollbar {
+    -webkit-appearance:none;
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: inherit;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color:#b6b6b6;
+    border:1px solid #fff;
+    border-radius:10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #9d9d9d
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: #838383
+}
+
+::selection {
+    background: #d7dbf0;
+}
+
+
 div.headband{
 	height: 2px;
 	background: -webkit-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* Safari 5.1 - 6.0 */
@@ -34,6 +65,10 @@ div.back-to-top{
     -webkit-transform: 0 0 0;
     transform: translate3d(0, 0, 0);
     border-radius: 0px;
+  }
+  
+  .content-wrap,.header-inner,.sidebar-inner{
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 30px rgba(10, 10, 0, 0.1) inset;
   }
 
 // 自定义页脚跳动的心样式
