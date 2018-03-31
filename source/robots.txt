@@ -10,6 +10,6 @@ Disallow: /fonts/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: https://xqmcode.coding.me/search.xml
-Sitemap: https://xqmcode.coding.me/sitemap.xml
-Sitemap: https://xqmcode.coding.me/baidusitemap.xml
+Sitemap: https://xiong2.xyz/search.xml
+Sitemap: https://xiong2.xyz/sitemap.xml
+Sitemap: https://xiong2.xyz/baidusitemap.xml
