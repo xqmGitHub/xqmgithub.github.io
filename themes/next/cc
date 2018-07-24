@@ -35,7 +35,7 @@ favicon:
   #ms_browserconfig: /images/browserconfig.xml
 
 # Set default keywords (Use a comma to separate)
-keywords: "Hexo, NexT"
+keywords: "Hexo, NexT, Blog, PHP"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
@@ -71,6 +71,10 @@ footer:
   # Any custom text can be defined here.
   #custom_text: Hosted by <a target="_blank" href="https://pages.github.com">GitHub Pages</a>
   custom_text: Hosted by <a href="https://pages.coding.me" style="font-weight:bold">Coding Pages</a>
+  
+  ##闲聊么 https://www.xianliao.me/
+  xianliao_script: true
+  xianliao_text: <script>var xlm_wid='13533';var xlm_url='https://www.xianliao.me/';</script><script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
   
   # 底部波浪
   waveWrapper: true

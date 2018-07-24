@@ -46,6 +46,7 @@
 #}</div>
 {% endif %}
 
+
 {% if theme.footer.waveWrapper %}
   <div class="waveWrapper waveAnimation">
   <div class="waveWrapperInner bgTop">
@@ -58,4 +59,8 @@
     <div class="wave waveBottom" style="background-image: url('http://p5tq1m3a9.bkt.clouddn.com/hexo_blog/static/wave-bot.png');"></div>
   </div>
 </div>
+{% endif %}
+
+{% if theme.footer.xianliao_script %}
+  {{ theme.footer.xianliao_text }}
 {% endif %}
