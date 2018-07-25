@@ -64,3 +64,7 @@
 {% if theme.footer.xianliao_script %}
   {{ theme.footer.xianliao_text }}
 {% endif %}
+
+{% if theme.footer.script_51la %}
+  {{ theme.footer.script_51la }}
+{% endif %}

@@ -76,6 +76,9 @@ footer:
   xianliao_script: true
   xianliao_text: <script>var xlm_wid='13533';var xlm_url='https://www.xianliao.me/';</script><script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
   
+  ##网站统计 https://www.51.la/
+  script_51la: <script type="text/javascript" src="//js.users.51.la/19583395.js"></script>
+  
   # 底部波浪
   waveWrapper: true
 
