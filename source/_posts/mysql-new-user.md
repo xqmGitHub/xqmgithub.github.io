@@ -2,7 +2,7 @@
 title: Mysql创建用户并授权
 top: 0
 date: 2018-06-25 14:46:20
-categories: Mysql
+categories: MySql
 tags:
  - mysql
 ---
