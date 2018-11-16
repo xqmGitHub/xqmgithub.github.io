@@ -13,11 +13,17 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="{{ page.lang || page.language || config.language }}">
-<div id="pageLoading" class="cssLoading">
-    <div><span></span></div>
-    <div><span></span></div>
-    <div><span></span></div>
-</div>
+	<div id="loading-wrap">
+		<div id="loading">
+			<p><font color="gray">正在载入，请稍候.......</font></p>
+			<p> 
+				<input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+				<br>
+				<input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+			</p>
+		</div>
+	</div>
+
   {% set container_class = "container " %}
   {% if theme.sidebar.position %}
     {% set container_class = container_class + 'sidebar-position-' + theme.sidebar.position %}

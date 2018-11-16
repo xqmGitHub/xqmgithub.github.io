@@ -15,27 +15,20 @@
 	console.clear();
 	console.log("%c又特么来偷我代码？", 'background-image:-webkit-gradient( linear, left top, right top, color-stop(0, #f22), color-stop(0.15, #f2f), color-stop(0.3, #22f), color-stop(0.45, #2ff), color-stop(0.6, #2f2),color-stop(0.75, #2f2), color-stop(0.9, #ff2), color-stop(1, #f22) );color:transparent;-webkit-background-clip: text;font-size:2em;');
 })();
-/*document.onreadystatechange = function(){
-    var page = document.getElementById('pageDiv');
-    if (document.readyState == 'interactive') {
-        window.setTimeout(function(){
-            disableLoad();
-        },4000)
-    }
-
-    if (document.readyState == 'complete') {        
-        if (page.classList.contains('js-hidden')) {
-            disableLoad();
-        }
-    }
+var bar = 1;
+var line = "|||||||||";
+var amount = "|";
+count();
+function count(){ 
+	bar= bar + 9;
+	amount = amount + line;
+	document.getElementById('chart').value = amount;
+	document.getElementById('percent').value = bar+"%"; 
+	if (bar<99) {
+		setTimeout("count()",100);
+	}else {
+		//document.getElementsByTagName('body')[0].removeChild(document.getElementById("loading-wrap"));
+		//document.getElementById("loading-wrap").style.display="none"; 
+		$("#loading-wrap").fadeOut(500);
+	} 
 }
-
-function disableLoad(){
-    var
-    page = document.getElementById('pageDiv'),
-    loading = document.getElementById('pageLoading');
-
-    loading.classList.add('js-hidden');
-    page.classList.remove('js-hidden');
-	
-}*/
