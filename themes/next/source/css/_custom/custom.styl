@@ -1,68 +1,4 @@
 // Custom styles.
-/*.cssLoading{
-	width: 60px;
-	height: 60px;
-	margin: 0 auto;
-	margin-top: 20%;
-	position: relative;
-	-webkit-animation: load 3s linear infinite;
-}
-.cssLoading div{
-	width: 100%;
-	height: 100%;
-	position: absolute;
-}
-.cssLoading span{
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	background: #99CC66;
-	position: absolute;
-	left: 50%;
-	margin-top: -10px;
-	margin-left: -10px;
-	-webkit-animation: changeBgColor 3s ease infinite;
-}
-@-webkit-keyframes load{
-	0%{
-		-webkit-transform: rotate(0deg);
-	}
-	33.3%{
-		-webkit-transform: rotate(120deg);
-	}
-	66.6%{
-		-webkit-transform: rotate(240deg);
-	}
-	100%{
-		-webkit-transform: rotate(360deg);
-	}
-}
-@-webkit-keyframes changeBgColor{
-	0%,100%{
-		background: #99CC66;
-	}
-	33.3%{
-		background: #FFFF66;
-	}
-	66.6%{
-		background: #FF6666;
-	}
-}
-.cssLoading div:nth-child(2){
-	-webkit-transform: rotate(120deg);
-}
-.cssLoading div:nth-child(3){
-	-webkit-transform: rotate(240deg);
-}
-.cssLoading div:nth-child(2) span{
-	-webkit-animation-delay: 1s;
-}
-.cssLoading div:nth-child(3) span{
-	-webkit-animation-delay: 2s;
-}*/
-
-
 
 body {
     cursor: url(../images/funny.png),auto;
@@ -241,4 +177,25 @@ div.back-to-top{
 
 .back-to-top.back-to-top-on {
   bottom: 90px;
+}
+
+//loading
+#loading-wrap{
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+	background: #FFF;
+	z-index: 1;
+    display: block;
+}
+#loading{
+	position:fixed;
+	line-height:30px;
+	text-align:center;
+	transform:translate(-50%,-50%);
+	left:50%;
+	top:50%;
+	border-radius:50%;
 }
