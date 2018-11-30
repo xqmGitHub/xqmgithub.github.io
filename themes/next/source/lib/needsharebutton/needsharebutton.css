@@ -18,7 +18,9 @@
 
   width: 100%;
   max-width: 200px;
-  margin: auto;
+  /*margin: auto;*/
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 .need-share-button_dropdown {
   position: absolute;
