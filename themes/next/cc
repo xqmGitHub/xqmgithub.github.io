@@ -73,7 +73,7 @@ footer:
   custom_text: Hosted by <a href="https://pages.coding.me" style="font-weight:bold">Coding Pages</a>
   
   ##闲聊么 https://www.xianliao.me/
-  xianliao_script: true
+  xianliao_script: false
   xianliao_text: <script>var xlm_wid='13533';var xlm_url='https://www.xianliao.me/';</script><script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
   
   ##网站统计 https://www.51.la/
@@ -125,6 +125,7 @@ menu:
   #schedule: /schedule/ || calendar
   #sitemap: /sitemap.xml || sitemap
   #commonweal: /404/ || heartbeat
+  guestbook: /guestbook || book
 
 # Enable/Disable menu icons.
 # 是否开启菜单图标
