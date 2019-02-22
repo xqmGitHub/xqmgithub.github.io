@@ -8,8 +8,6 @@ before_install:
 - npm install hexo-cli -g
 install:
 - npm install
-#before_script:
-#  - npm install -g gulp
 script:
 - hexo clean
 - hexo generate && gulp
@@ -22,7 +20,7 @@ after_script:
   #github邮箱
   - git config user.email "xqmmai@gmail.com"
   - git add .
-  - git commit -m "TravisCI 自动部署 %Y-%m-%d %H:%M"
+  - git commit -m "auto commit by TravisCI at `date +%Y%m%d`"
   # Github Pages
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master 
   # Coding Pages
@@ -35,7 +33,16 @@ branches:
 
 env:
  global:
-   # Github Pages(github仓库地址)git@github.com:xqmGitHub/xqmgithub.github.io
+   # Github Pages(github仓库地址)
    - GH_REF: github.com/xqmgithub/xqmgithub.github.io.git
-   # Coding Pages(coding仓库地址)git@git.coding.net:xqmcode/xqmcode.git
+   # Coding Pages(coding仓库地址)
    - CO_REF: git.coding.net/xqmcode/xqmcode.git
+   
+# configure notifications (email, IRC, campfire etc)
+# please update this section to your needs!
+# https://docs.travis-ci.com/user/notifications/
+notifications:
+  email:
+    - xqmmai@gmail.com
+  on_success: change
+  on_failure: always
