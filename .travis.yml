@@ -35,7 +35,7 @@ branches:
 
 env:
  global:
-   # Github Pages(github仓库地址)
-   - GH_REF: git@github.com:xqmGitHub/xqmgithub.github.io
-   # Coding Pages(coding仓库地址)
-   - CO_REF: git@git.coding.net:xqmcode/xqmcode.git
+   # Github Pages(github仓库地址)git@github.com:xqmGitHub/xqmgithub.github.io
+   - GH_REF: github.com/xqmgithub/xqmgithub.github.io
+   # Coding Pages(coding仓库地址)git@git.coding.net:xqmcode/xqmcode.git
+   - CO_REF: git.coding.net/xqmcode/xqmcode.coding.me.git
