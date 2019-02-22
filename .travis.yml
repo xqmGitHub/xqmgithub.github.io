@@ -8,9 +8,12 @@ before_install:
 - npm install hexo-cli -g
 install:
 - npm install
+before_script:
+  - npm install -g gulp
 script:
 - hexo clean
-- hexo generate && gulp
+- hexo generate
+- gulp
 after_script:
   - cd ./public
   - git init
