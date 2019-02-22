@@ -1,0 +1,38 @@
+language: node_js
+node_js:
+- 8.9.0
+cache:
+  directories:
+  - node_modules
+before_install:
+- npm install hexo-cli -g
+install:
+- npm install
+script:
+- hexo clean
+- hexo generate && gulp
+after_script:
+  - cd ./public
+  - git init
+  #github用户名
+  - git config user.name "xqmGitHub"
+  #github邮箱
+  - git config user.email "xqmmai@gmail.com"
+  - git add .
+  - git commit -m "TravisCI 自动部署"
+  # Github Pages
+  - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master 
+  # Coding Pages
+  - git push --force --quiet "https://xqmcode:${CO_TOKEN}@${CO_REF}" master:master
+
+branches:
+  only:
+  #这里替换你要监听的分支
+  - hexo
+
+env:
+ global:
+   # Github Pages(github仓库地址)
+   - GH_REF: git@github.com:xqmGitHub/xqmgithub.github.io
+   # Coding Pages(coding仓库地址)
+   - CO_REF: git@git.coding.net:xqmcode/xqmcode.git
