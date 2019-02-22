@@ -11,9 +11,11 @@ install:
 # before_script:
 # - npm install -g gulp
 script:
+- cp ./cc ./_config.yml
 - hexo clean
 - hexo generate
 - gulp
+- rm -f ./_config.yml
 after_script:
   - cd ./public
   - git init
@@ -22,7 +24,7 @@ after_script:
   #github邮箱
   - git config user.email "xqmmai@gmail.com"
   - git add .
-  - git commit -m "TravisCI 自动部署"
+  - git commit -m "TravisCI 自动部署 %Y-%m-%d %H:%M"
   # Github Pages
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master 
   # Coding Pages
