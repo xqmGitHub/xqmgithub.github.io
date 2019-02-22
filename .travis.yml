@@ -11,11 +11,9 @@ install:
 # before_script:
 # - npm install -g gulp
 script:
-- cp ./cc ./_config.yml
 - hexo clean
-- hexo generate
-- gulp
-- rm -f ./_config.yml
+- hexo generate && gulp
+#- gulp
 after_script:
   - cd ./public
   - git init
