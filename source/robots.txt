@@ -7,6 +7,6 @@ Disallow: /vendors/
 Disallow: /vendors/
 Disallow: /fancybox/
 
-Sitemap: https://xiong2.xyz/search.xml
-Sitemap: https://xiong2.xyz/sitemap.xml
-Sitemap: https://xiong2.xyz/baidusitemap.xml
+Sitemap: https://blog.gotwo.top/search.xml
+Sitemap: https://blog.gotwo.top/sitemap.xml
+Sitemap: https://blog.gotwo.top/baidusitemap.xml

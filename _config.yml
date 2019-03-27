@@ -12,7 +12,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://xiong2.xyz/
+url: https://blog.gotwo.top/
 root: /
 permalink: :title.html
 permalink_defaults:
