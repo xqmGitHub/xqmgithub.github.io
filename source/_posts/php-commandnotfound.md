@@ -4,7 +4,7 @@ top: 0
 date: 2018-11-30 16:30:34
 categories: Linux
 tags:
- - linux
+ - Linux
  - command 
 ---
 
