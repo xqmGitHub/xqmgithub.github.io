@@ -241,6 +241,7 @@ var searchFunc = function(path, search_id, content_id) {
         .css('overflow', 'hidden');
     $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
 
+    var searchTextCount = 0;
     $.ajax({
         url: path,
         dataType: isXml ? "xml" : "json",
@@ -270,7 +271,6 @@ var searchFunc = function(path, search_id, content_id) {
                     datas.forEach(function(data) {
                         var isMatch = false;
                         var hitCount = 0;
-                        var searchTextCount = 0;
                         var title = data.title.trim();
                         var titleInLowerCase = title.toLowerCase();
                         var content = data.content.trim().replace(/<[^>]+>/g,"");
@@ -436,58 +436,60 @@ var searchFunc = function(path, search_id, content_id) {
             proceedsearch();
         }
     });
-}
 
-// merge hits into slices
-function mergeIntoSlice(text, start, end, index) {
-    var item = index[index.length - 1];
-    var position = item.position;
-    var word = item.word;
-    var hits = [];
-    var searchTextCountInSlice = 0;
-    while (position + word.length <= end && index.length != 0) {
-        if (word === searchText) {
-            searchTextCountInSlice++;
-        }
-        hits.push({position: position, length: word.length});
-        var wordEnd = position + word.length;
+    // merge hits into slices
+    function mergeIntoSlice(text, start, end, index) {
+        var item = index[index.length - 1];
+        var position = item.position;
+        var word = item.word;
+        var hits = [];
+        var searchTextCountInSlice = 0;
+        while (position + word.length <= end && index.length != 0) {
+            if (word === searchText) {
+                searchTextCountInSlice++;
+            }
+            hits.push({position: position, length: word.length});
+            var wordEnd = position + word.length;
 
-        // move to next position of hit
+            // move to next position of hit
 
-        index.pop();
-        while (index.length != 0) {
-            item = index[index.length - 1];
-            position = item.position;
-            word = item.word;
-            if (wordEnd > position) {
-                index.pop();
-            } else {
-                break;
+            index.pop();
+            while (index.length != 0) {
+                item = index[index.length - 1];
+                position = item.position;
+                word = item.word;
+                if (wordEnd > position) {
+                    index.pop();
+                } else {
+                    break;
+                }
             }
         }
+        searchTextCount += searchTextCountInSlice;
+        return {
+            hits: hits,
+            start: start,
+            end: end,
+            searchTextCount: searchTextCountInSlice
+        };
     }
-    searchTextCount += searchTextCountInSlice;
-    return {
-        hits: hits,
-        start: start,
-        end: end,
-        searchTextCount: searchTextCountInSlice
-    };
-}
 
 // highlight title and content
-function highlightKeyword(text, slice) {
-    var result = '';
-    var prevEnd = slice.start;
-    slice.hits.forEach(function (hit) {
-        result += text.substring(prevEnd, hit.position);
-        var end = hit.position + hit.length;
-        result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
-        prevEnd = end;
-    });
-    result += text.substring(prevEnd, slice.end);
-    return result;
+    function highlightKeyword(text, slice) {
+        var result = '';
+        var prevEnd = slice.start;
+        slice.hits.forEach(function (hit) {
+            result += text.substring(prevEnd, hit.position);
+            var end = hit.position + hit.length;
+            result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+            prevEnd = end;
+        });
+        result += text.substring(prevEnd, slice.end);
+        return result;
+    }
 }
+
+
 
 // handle and trigger popup window;
 $('.popup-trigger').click(function(e) {
