@@ -4,7 +4,7 @@ top: 0
 date: 2019-11-25 16:27:02
 categories: PHP
 tags:
-- PhpStorm
+- phpstorm
 ---
 
 在项目中使用 PHP7 新特性时 PHPStorm 出现了红色波浪线错误，鼠标移上去看，提示 `Coalesce operator is available in PHP 7 Only`，这明显不是代码错误，项目基于 PHP7.0+的，有点强迫症，必须把这个给干掉
@@ -19,4 +19,5 @@ tags:
 
 这就修改成功了
 红色波浪错误不见了，看着舒服多了
+
 比较懒 就不上图了
