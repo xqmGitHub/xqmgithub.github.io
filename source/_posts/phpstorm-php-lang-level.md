@@ -1,7 +1,7 @@
 ---
 title: "修改 PhpStorm 的默认 PHP 版本语法为 7.0+"
 top: 0
-date: 2019-11-25 16:27:02
+date: 2019-11-28 09:20:02
 categories: PHP
 tags:
 - phpstorm
