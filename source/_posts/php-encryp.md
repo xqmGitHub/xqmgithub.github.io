@@ -29,7 +29,7 @@ function encryptDecrypt($key, $string, $decrypt){
 
 ```
 //加密函数  
-function lock_url($txt,$key='zhuoyuexiazai'){  
+function lock_url($txt,$key='hahaha'){  
     $txt = $txt.$key;  
     $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";  
     $nh = rand(0,64);  
@@ -47,7 +47,7 @@ function lock_url($txt,$key='zhuoyuexiazai'){
     return urlencode(base64_encode($ch.$tmp));  
 }  
 //解密函数  
-function unlock_url($txt,$key='zhuoyuexiazai'){  
+function unlock_url($txt,$key='hahaha'){  
     $txt = base64_decode(urldecode($txt));  
     $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=+";  
     $ch = $txt[0];  
@@ -70,7 +70,7 @@ function unlock_url($txt,$key='zhuoyuexiazai'){
 
 
 ```
-function passport_encrypt($txt, $key = 'www.zhuoyuexiazai.com') {   
+function passport_encrypt($txt, $key = 'hahaha') {   
     srand((double)microtime() * 1000000);   
     $encrypt_key = md5(rand(0, 32000));   
     $ctr = 0;   
@@ -82,7 +82,7 @@ function passport_encrypt($txt, $key = 'www.zhuoyuexiazai.com') {
     return urlencode(base64_encode(passport_key($tmp, $key)));   
 }   
   
-function passport_decrypt($txt, $key = 'www.zhuoyuexiazai.com') {   
+function passport_decrypt($txt, $key = 'hahaha') {   
     $txt = passport_key(base64_decode(urldecode($txt)), $key);   
     $tmp = '';   
     for($i = 0;$i < strlen($txt); $i++) {   
