@@ -2,7 +2,7 @@
 title: limit分页查询性能问题
 top: 0
 date: 2020-01-04 14:48:54
-categories: Mysql
+categories: MySql
 tags:
  - limit
  - mysql

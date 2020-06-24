@@ -2,7 +2,7 @@
 title: MySQL Explain 执行计划
 top: 0
 date: 2020-06-16 18:30:20
-categories: Mysql
+categories: MySql
 tags:
  - explain
  - mysql
@@ -300,7 +300,6 @@ mysql> EXPLAIN SELECT * from three;
 * Using index
 `Using index`：我们在相应的`select`操作中使用了覆盖索引，通俗一点讲就是查询的列被索引覆盖，
 使用到覆盖索引查询速度会非常快，`SQl`优化中理想的状态。
-
 什么又是覆盖索引?
 一条`SQL`只需要通过索引就可以返回，我们所需要查询的数据（一个或几个字段），而不必通过二级索引，
 查到主键之后再通过主键查询整行数据（`select *`）。
@@ -312,8 +311,8 @@ mysql> EXPLAIN SELECT one_id from one ;
 +----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-------------+
 |  1 | SIMPLE      | one   | NULL       | index | NULL          | idx_two_id | 5       | NULL |    3 |      100 | Using index |
 +----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-------------+
-```
-注意：想要使用到覆盖索引，我们在`select`时只取出需要的字段，不可`select *`，而且该字段建了索引。
+```        
+注意：想要使用到覆盖索引，我们在`select`时只取出需要的字段，不可`select *`，而且该字段建了索引。    
 ```mysql
 mysql> EXPLAIN SELECT * from one ;
 +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+
@@ -326,7 +325,6 @@ mysql> EXPLAIN SELECT * from one ;
 * Using where
 `Using where`：查询时未找到可用的索引，进而通过`where`条件过滤获取所需数据，
 但要注意的是并不是所有带`where`语句的查询都会显示`Using where`。
-
 下边示例`create_time`并未用到索引，`type`为`ALL`，即`MySQL`通过全表扫描后再按`where`条件筛选数据。
 ```mysql
 mysql> EXPLAIN SELECT one_name from one where create_time ='2020-05-18';
@@ -370,7 +368,6 @@ mysql> EXPLAIN SELECT one_id from one  ORDER BY one_id;
 
 * Using join buffer
 `Using join buffer`：在我们联表查询的时候，如果表的连接条件没有用到索引，需要有一个连接缓冲区来存储中间结果。
-
 先看一下有索引的情况：连接条件`one_name`、`two_name`都用到索引。
 ```mysql
 mysql> EXPLAIN SELECT one_name from one o,two t where o.one_name = t.two_name;
@@ -381,7 +378,6 @@ mysql> EXPLAIN SELECT one_name from one o,two t where o.one_name = t.two_name;
 |  1 | SIMPLE      | t     | NULL       | ref   | idx_name      | idx_name | 768     | xin-slave.o.one_name |    1 |      100 | Using index              |
 +----+-------------+-------+------------+-------+---------------+----------+---------+----------------------+------+----------+--------------------------+
 ```
-
 接下来删掉 连接条件`one_name`、`two_name`的字段索引。
 发现`Extra`列变成`Using join buffer`，`type`均为全表扫描，这也是`SQL`优化中需要注意的地方。
 ```mysql
@@ -416,7 +412,9 @@ mysql> EXPLAIN select now();
 +----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+
 ```
 
-`Extra`列的信息非常非常多，这里就不再一一列举了，详见`MySQL`官方文档 ：(https://dev.mysql.com/doc/ref...)[https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#jointype_index_merge]
+
+`Extra` 列的信息非常非常多，这里就不再一一列举了，详见`MySQL`官方文档 ：[https://dev.mysql.com/doc/ref...](https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#jointype_index_merge)   
+
 
 #### 总结
 重点看的几列：
