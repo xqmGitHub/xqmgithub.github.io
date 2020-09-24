@@ -35,6 +35,8 @@ db.collection.update(
 
 [官方连接连接地址](https://docs.mongodb.com/manual/reference/update-methods/)
 
+<!--more-->
+
 #### 实例
 
 向数据库插入点数据（集合名称为 test)
