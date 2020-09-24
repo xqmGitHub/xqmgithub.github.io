@@ -50,13 +50,13 @@
 {% if theme.footer.waveWrapper %}
   <div class="waveWrapper waveAnimation">
   <div class="waveWrapperInner bgTop">
-    <div class="wave waveTop" style="background-image: url('https://raw.githubusercontent.com/xqmGitHub/xqmgithub.github.io/img/hexo/wave-bot.png');"></div>
+    <div class="wave waveTop" style="background-image: url('/images/wave-bot.png');"></div>
   </div>
   <div class="waveWrapperInner bgMiddle">
-    <div class="wave waveMiddle" style="background-image: url('https://raw.githubusercontent.com/xqmGitHub/xqmgithub.github.io/img/hexo/wave-mid.png');"></div>
+    <div class="wave waveMiddle" style="background-image: url('/images/wave-mid.png');"></div>
   </div>
   <div class="waveWrapperInner bgBottom">
-    <div class="wave waveBottom" style="background-image: url('https://raw.githubusercontent.com/xqmGitHub/xqmgithub.github.io/img/hexo/wave-bot.png');"></div>
+    <div class="wave waveBottom" style="background-image: url('/images/wave-bot.png');"></div>
   </div>
 </div>
 {% endif %}
@@ -66,5 +66,7 @@
 {% endif %}
 
 {% if theme.footer.script_51la %}
+  <span id="script_51la" style="display: none;">
   {{ theme.footer.script_51la }}
+  </span>
 {% endif %}

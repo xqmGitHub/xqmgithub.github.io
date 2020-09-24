@@ -1,23 +1,23 @@
 // Custom styles.
 
 body {
-    cursor: url(../images/funny.png),auto;
-	background:url(https://raw.githubusercontent.com/xqmGitHub/xqmgithub.github.io/img/hexo/body-bg.jpg);
+    cursor: url(../images/normal.cur),auto;
+    background:url(../images/bg.png);
     background-size:cover;
-	background-repeat:no-repeat;
-	background-attachment:fixed;
-	background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-position:center;
 }
 a:hover {
-   cursor: url(../images/sinister.png), auto;
+   cursor: url(../images/link.cur), auto;
 }
 
 .body-bg{
-    background:url(https://raw.githubusercontent.com/xqmGitHub/xqmgithub.github.io/img/hexo/body-bg.jpg);
+    background:url(../images/bg.png);
     background-size:cover;
-	background-repeat:no-repeat;
-	background-attachment:fixed;
-	background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-position:center;
 }
 
 .js-open {
@@ -39,25 +39,28 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color:#b6b6b6;
+    background-color:#cccccc;
     border:1px solid #fff;
     border-radius:10px;
+	  //background-image: -webkit-gradient(linear, left top, left bottom,color-stop(0, #f1ccb8), color-stop(0.1, #f1f1b8), color-stop(0.2, #b8f1ed), color-stop(0.3, #b8f1cc), color-stop(0.4, #CDDC39), color-stop(0.5, #e7dac9), color-stop(0.6, #FFC107), color-stop(0.7, #dcff93), color-stop(0.8, #b7d28d), color-stop(0.9, #f2debd));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #9d9d9d
+    background-color: #9d9d9d;
+	  background-image: -webkit-gradient(linear, left top, left bottom,color-stop(0, #ff0000), color-stop(0.1, #ff9600), color-stop(0.2, #fc9b00), color-stop(0.3, #ff0), color-stop(0.4, #00ff00), color-stop(0.5, #0089ff), color-stop(0.6, #FFC107), color-stop(0.7, #00f), color-stop(0.8, #ff0700), color-stop(0.9, #ff4c00));
 }
 
 ::-webkit-scrollbar-thumb:active {
-    background-color: #838383
+    background-color: #838383;
+	  background-image: -webkit-gradient(linear, left top, left bottom,color-stop(0, #ff0000), color-stop(0.1, #ff9600), color-stop(0.2, #fc9b00), color-stop(0.3, #ff0), color-stop(0.4, #00ff00), color-stop(0.5, #0089ff), color-stop(0.6, #FFC107), color-stop(0.7, #00f), color-stop(0.8, #ff0700), color-stop(0.9, #ff4c00));
 }
 //头部彩条
 div.headband{
     position: fixed;
     width: 100%;
     z-index: 9;
-	height: 2px;
-	background: -webkit-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* Safari 5.1 - 6.0 */
+    height: 2px;
+    background: -webkit-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* Safari 5.1 - 6.0 */
     background: -o-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* Opera 11.1 - 12.0 */
     background: -moz-linear-gradient(left, red, orange, yellow, green, blue, indigo, violet); /* Firefox 3.6 - 15 */
     background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); /* 标准的语法（必须放在最后） */
@@ -65,7 +68,7 @@ div.headband{
 
 div.back-to-top{
     color: #fff;
-	background: #222;
+	  background: #222;
 }
 //文章宽度
 .post-block {
@@ -73,25 +76,26 @@ div.back-to-top{
     margin: 0 auto;
 }
 // 主页文章添加阴影效果
- .post:hover {
-   -webkit-box-shadow: 0 15px 30px rgba(0,0,0,.1);
+.post:hover {
+    -webkit-box-shadow: 0 15px 30px rgba(0,0,0,.1);
     box-shadow: 0 15px 30px rgba(0,0,0,.1);
     -webkit-transform: translate3d(0,-2px,0);
     transform: translate3d(0,-2px,0);
     border-radius: 2px;
-  }
-  div#posts .post:hover {
-  -webkit-box-shadow: 0 0 0;
+}
+div#posts .post:hover {
+    -webkit-box-shadow: 0 0 0;
     box-shadow: 0 0 0;
     -webkit-transform: 0 0 0;
     transform: translate3d(0, 0, 0);
     border-radius: 0px;
-  }
-  
-  .content-wrap,.header-inner,.sidebar-inner,.sidebar{
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 30px rgba(10, 10, 0, 0.55) inset;
-	background: rgba(255,255,255,0.8) none repeat scroll !important;
-  }
+}
+
+.content-wrap,.header-inner,.sidebar-inner,.sidebar{
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 30px rgba(10, 10, 0, 0.55) inset;
+    // background: rgba(255,255,255,0.8) none repeat scroll !important;
+    background: rgba(255,255,255,0.4) none repeat scroll !important;
+}
 
 // 自定义页脚跳动的心样式
 @keyframes heartAnimate {
@@ -176,7 +180,7 @@ div.back-to-top{
 }
 .waveAnimation .waveBottom {
     animation: move_wave 15s linear infinite;
-}            
+}
 
 .back-to-top.back-to-top-on {
   bottom: 90px;
@@ -201,4 +205,7 @@ div.back-to-top{
 	left:50%;
 	top:50%;
 	border-radius:50%;
+}
+#loading input:focus {
+    outline: none;
 }
