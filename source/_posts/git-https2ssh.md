@@ -30,7 +30,7 @@ origin https://github.com/xxx.git (push)
 * 移除本地分支
 `git remote rm origin`
 * 添加远程分支 
-`git remote add origin 'https://github.com/***.git'`
+`git remote add origin 'git@github.com:xxx/***.git'`
 * 最后就阔以愉快的用 ssh 方式了（前提是配置了 ssh key）
 
 
