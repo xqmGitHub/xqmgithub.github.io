@@ -6,10 +6,12 @@
     "version": "3.9.0"
   },
   "dependencies": {
+    "g": "^2.0.1",
     "gulp-htmlclean": "^2.7.16",
     "gulp-imagemin": "^4.1.0",
     "hexo": "^3.2.0",
     "hexo-baidu-url-submit": "0.0.5",
+    "hexo-cli": "^4.3.1",
     "hexo-deployer-git": "^0.3.1",
     "hexo-generator-archive": "^0.1.4",
     "hexo-generator-baidu-sitemap": "^0.1.2",
@@ -28,7 +30,7 @@
   },
   "devDependencies": {
     "browser-sync": "^2.23.6",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-asset-rev": "0.0.15",
     "gulp-changed": "^3.2.0",
     "gulp-clean-css": "^3.9.2",
