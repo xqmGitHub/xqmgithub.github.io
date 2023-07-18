@@ -6,6 +6,7 @@ tags:
  - Gulp
  - Hexo优化
  - 构建工具
+sticky: 0
 ---
 右键查看网页源代码发现有大量留白，咋整？
 实用的`Gulp`插件，帮助你的博客更加精简，快速。
@@ -105,7 +106,7 @@ npm install --save-dev gulp-imagemin
 
 
 如果在安装的过程中有报类似错误，npm ERR！ errno -4048 npm ERR！ Error：EPERM：operation not permitted, scandir
-看我之前写的 [npm install 报错（npm ERR！ errno -4048 npm ERR！ Error：EPERM：operation not permitted, scandir） 解决方法](https://xqmcode.coding.me/npmERR.html)
+看我之前写的 [npm install 报错（npm ERR！ errno -4048 npm ERR！ Error：EPERM：operation not permitted, scandir） 解决方法](https://xqmgithub.github.io//npmERR.html)
   
 
 

@@ -1,17 +1,17 @@
 var gulp = require('gulp');
 
-//PluginsÄ£¿é»ñÈ¡
+//Pluginsæ¨¡å—è·å–
 var minifycss = require('gulp-minify-css');
 var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var htmlclean = require('gulp-htmlclean');
-//Ñ¹Ëõcss
+//å‹ç¼©css
 gulp.task('minify-css', function () {
 return gulp.src('./public/**/*.css')
 .pipe(minifycss())
 .pipe(gulp.dest('./public'));
 });
-//Ñ¹Ëõhtml
+//å‹ç¼©html
 gulp.task('minify-html', function () {
 return gulp.src('./public/**/*.html')
 .pipe(htmlclean())
@@ -24,19 +24,19 @@ minifyURLs: true,
 
 .pipe(gulp.dest('./public'))
 });
-//Ñ¹Ëõjs ²»Ñ¹Ëõmin.js
+//å‹ç¼©js ä¸å‹ç¼©min.js
 gulp.task('minify-js', function () {
 return gulp.src(['./public/**/*.js', '!./public/**/*.min.js'])
 .pipe(uglify())
 .pipe(gulp.dest('./public'));
 });
 
-//4.0ÒÔÇ°µÄĞ´·¨ 
+//4.0ä»¥å‰çš„å†™æ³• 
 //gulp.task('default', [
   //  'minify-html', 'minify-css', 'minify-js'
 //]);
-//4.0ÒÔºóµÄĞ´·¨
-// Ö´ĞĞ gulp ÃüÁîÊ±Ö´ĞĞµÄÈÎÎñ
+//4.0ä»¥åçš„å†™æ³•
+// æ‰§è¡Œ gulp å‘½ä»¤æ—¶æ‰§è¡Œçš„ä»»åŠ¡
 gulp.task('default', gulp.parallel('minify-html', 'minify-css', 'minify-js', function() {
   // Do something after a, b, and c are finished.
 }));

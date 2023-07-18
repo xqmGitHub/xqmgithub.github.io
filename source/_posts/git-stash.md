@@ -6,6 +6,7 @@ categories: Git
 tags:
  - git
  - stash
+sticky: 0
 ---
 
 我们有时会遇到这样的情况，正在dev分支开发新功能，做到一半时有人过来反馈一个bug，让马上解决，要切换分支（`git checkout`），
