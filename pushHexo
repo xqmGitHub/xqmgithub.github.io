@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+git init
+git checkout -b updateHexo
+git config user.name "xqmGitHub"
+git config user.email "xqmmai@gmail.com"
+git add .
+git commit -m "commit at `date +%Y%m%d`"
+git remote add origin git@github.com:xqmGitHub/xqmgithub.github.io.git
+git push origin updateHexo --force
+echo "done~"
