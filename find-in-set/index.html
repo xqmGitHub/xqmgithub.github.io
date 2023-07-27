@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="首先举个例子来说：有个文章表里面有个type字段，它存储的是文章类型，有 1头条、2推荐、3热点、4图文等等 。现在有篇文章他既是头条，又是热点，还是图文，type中以 1,3,4 的格式存储。那我们如何用sql查找所有type中有4的图文类型的文章呢？？这就要我们的 find_in_set 出马的时候到了select * from article where FIND_IN_SET(&#39;4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql中find_in_set()函数的使用">
+<meta property="og:url" content="https://xqmgithub.github.io/find-in-set/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="首先举个例子来说：有个文章表里面有个type字段，它存储的是文章类型，有 1头条、2推荐、3热点、4图文等等 。现在有篇文章他既是头条，又是热点，还是图文，type中以 1,3,4 的格式存储。那我们如何用sql查找所有type中有4的图文类型的文章呢？？这就要我们的 find_in_set 出马的时候到了select * from article where FIND_IN_SET(&#39;4">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-02-25T09:18:46.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.317Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="find_in_set">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/find-in-set/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/find-in-set/","path":"find-in-set/","title":"mysql中find_in_set()函数的使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>mysql中find_in_set()函数的使用 | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E6%89%8B%E5%86%8C%E4%B8%ADfind-in-set%E5%87%BD%E6%95%B0%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">MySQL手册中find_in_set函数的语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find-in-set-%E5%92%8Cin%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">find_in_set()和in的区别：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#find-in-set-%E5%92%8Clike%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">find_in_set()和like的区别</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/find-in-set/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="mysql中find_in_set()函数的使用 | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql中find_in_set()函数的使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-25 17:18:46" itemprop="dateCreated datePublished" datetime="2018-02-25T17:18:46+08:00">2018-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySql/" itemprop="url" rel="index"><span itemprop="name">MySql</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>首先举个例子来说：<br>有个文章表里面有个type字段，它存储的是文章类型，有 1头条、2推荐、3热点、4图文等等 。<br>现在有篇文章他既是头条，又是热点，还是图文，type中以 1,3,4 的格式存储。那我们如何用sql查找所有type中有4的图文类型的文章呢？？<br>这就要我们的 find_in_set 出马的时候到了<br><code>select * from article where FIND_IN_SET(&#39;4&#39;,type)</code></p>
+<span id="more"></span>
+
+<h2 id="MySQL手册中find-in-set函数的语法"><a href="#MySQL手册中find-in-set函数的语法" class="headerlink" title="MySQL手册中find_in_set函数的语法"></a>MySQL手册中find_in_set函数的语法</h2><p>FIND_IN_SET(str,strlist)</p>
+<p>str 要查询的字符串<br>strlist 字段名 参数以”,”分隔 如 (1,2,6,8)<br>查询字段(strlist)中包含(str)的结果，返回结果为null或记录<br>假如字符串str在由N个子链组成的字符串列表strlist 中，则返回值的范围在 1 到 N 之间。 一个字符串列表就是一个由一些被 ‘,’ 符号分开的子链组成的字符串。如果第一个参数是一个常数字符串，而第二个是type SET列，则FIND_IN_SET() 函数被优化，使用比特计算。 如果str不在strlist 或strlist 为空字符串，则返回值为 0 。如任意一个参数为NULL，则返回值为 NULL。这个函数在第一个参数包含一个逗号(‘,’)时将无法正常运行。</p>
+<p> 例子：<br><code>mysql&gt; SELECT FIND_IN_SET(&#39;b&#39;, &#39;a,b,c,d&#39;);</code><br>返回 2 因为b 在strlist集合中放在2的位置 从1开始</p>
+<p><code>select FIND_IN_SET(&#39;1&#39;, &#39;1&#39;);</code><br>返回 就是1 这时候的strlist集合有点特殊 只有一个字符串 其实就是要求前一个字符串 一定要在后一个字符串集合中才返回大于0的数<br><code>select FIND_IN_SET(&#39;2&#39;, &#39;1，2&#39;);</code> 返回2<br><code>select FIND_IN_SET(&#39;6&#39;, &#39;1&#39;); </code>返回0</p>
+<p>注意：<br><code>select * from treenodes where FIND_IN_SET(id, &#39;1,2,3,4,5&#39;); </code><br>使用find_in_set函数一次返回多条记录<br>id 是一个表的字段，然后每条记录分别是id等于1，2，3，4，5的时候<br>有点类似in （集合）<br><code>select * from treenodes where id in (1,2,3,4,5);</code></p>
+<h2 id="find-in-set-和in的区别："><a href="#find-in-set-和in的区别：" class="headerlink" title="find_in_set()和in的区别："></a>find_in_set()和in的区别：</h2><p>搞个测试表来说明两者的区别</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `tb_test` (</span><br><span class="line">  `id` int(8) NOT NULL auto_increment,</span><br><span class="line">  `name` varchar(255) NOT NULL,</span><br><span class="line">  `list` varchar(255) NOT NULL,</span><br><span class="line">  PRIMARY KEY  (`id`)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO `tb_test` VALUES (1, &#x27;name&#x27;, &#x27;daodao,xiaohu,xiaoqin&#x27;);</span><br><span class="line">INSERT INTO `tb_test` VALUES (2, &#x27;name2&#x27;, &#x27;xiaohu,daodao,xiaoqin&#x27;);</span><br><span class="line">INSERT INTO `tb_test` VALUES (3, &#x27;name3&#x27;, &#x27;xiaoqin,daodao,xiaohu&#x27;);</span><br></pre></td></tr></table></figure>
+<p>原来以为mysql可以进行这样的查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- (一) </span><br><span class="line">SELECT id,name,list from tb_test WHERE &#x27;daodao&#x27; IN(list);</span><br></pre></td></tr></table></figure>
+<p>实际上这样是不行的，这样只有当list字段的值等于’daodao’时（和IN前面的字符串完全匹配），查询才有效，否则都得不到结果，即使’daodao’真的在list中。</p>
+<p>再来看看这个：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- (二)</span><br><span class="line">SELECT id,name,list from tb_test WHERE &#x27;daodao&#x27; IN (&#x27;libk&#x27;, &#x27;zyfon&#x27;, &#x27;daodao&#x27;);</span><br></pre></td></tr></table></figure>
+<p>这样是可以的。</p>
+<p>这两条到底有什么区别呢？为什么第一条不能取得正确的结果，而第二条却能取得结果。原因其实是（一）中 (list) list是变量， 而（二）中 (‘libk’, ‘zyfon’, ‘daodao’)是常量。<br>所以如果要让（一）能正确工作，需要用find_in_set():</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- (一)的改进版</span><br><span class="line">SELECT id,name,list from tb_test WHERE FIND_IN_SET(&#x27;daodao&#x27;,list);</span><br></pre></td></tr></table></figure>
+<p>所以如果list是常量，则可以直接用IN， 否则要用find_in_set()函数。</p>
+<h2 id="find-in-set-和like的区别"><a href="#find-in-set-和like的区别" class="headerlink" title="find_in_set()和like的区别"></a>find_in_set()和like的区别</h2><p>在mysql中，有时我们在做数据库查询时，需要得到某字段中包含某个值的记录，但是它也不是用like能解决的，使用like可能查到我们不想要的记录，它比like更精准，这时候mysql的FIND_IN_SET函数就派上用场了，下面来看一个例子。</p>
+<p>创建表并插入语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE users(</span><br><span class="line">    id int(6) NOT NULL AUTO_INCREMENT,</span><br><span class="line">    name VARCHAR(20) NOT NULL,</span><br><span class="line">    limits VARCHAR(50) NOT NULL, -- 权限</span><br><span class="line">    PRIMARY KEY (id)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">INSERT INTO users(name, limits) VALUES(&#x27;小张&#x27;,&#x27;1,2,12&#x27;); </span><br><span class="line">INSERT INTO users(name, limits) VALUES(&#x27;小王&#x27;,&#x27;11,22,32&#x27;);</span><br></pre></td></tr></table></figure>
+<p>其中limits表示用户所拥有的权限（以逗号分隔），现在想查询拥有权限编号为2的用户，如果用like关键字的话，则查询结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM users WHERE limits LIKE &#x27;%2%&#x27;;</span><br></pre></td></tr></table></figure>
+<p>这样第二条数据不具有权限’2’的用户也查出来了，不符合预期。下面利用mysql 函数find_in_set()来解决。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM users WHERE FIND_IN_SET(2,limits);</span><br></pre></td></tr></table></figure>
+<p>这样就能达到我们预期的效果，问题就解决了！</p>
+<p>注意：mysql字符串函数 <code>find_in_set(str1,str2)</code>函数是返回str2中str1所在的位置索引，str2必须以”,”分割开。</p>
+<p><strong>总结：</strong>like是广泛的模糊匹配，字符串中没有分隔符，Find_IN_SET 是精确匹配，字段值以英文”,”分隔，Find_IN_SET查询的结果要小于like查询的结果。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/find-in-set/" rel="tag"># find_in_set</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/shortcut/" rel="prev" title="去掉和恢复Win10快捷方式上小箭头的方法">
+                  <i class="fa fa-angle-left"></i> 去掉和恢复Win10快捷方式上小箭头的方法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/batchSql/" rel="next" title="mysql批量执行sql文件">
+                  mysql批量执行sql文件 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言 “说到对图片进行处理，我们经常会想到PhotoShop这类的图像处理工具。作为前端开发者，我们经常会需要处理一些特效，例如根据不同的状态，让图标显示不同的颜色。或者是hover的时候，对图片的对比度，阴影进行处理。” 本文略长，请耐心阅读   你以为这些是经过PS软件处理出来的？不不不，纯粹的是用css写出来的，很神奇把。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用CSS改变图片颜色的100种方法！">
+<meta property="og:url" content="https://xqmgithub.github.io/css-change-color/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="前言 “说到对图片进行处理，我们经常会想到PhotoShop这类的图像处理工具。作为前端开发者，我们经常会需要处理一些特效，例如根据不同的状态，让图标显示不同的颜色。或者是hover的时候，对图片的对比度，阴影进行处理。” 本文略长，请耐心阅读   你以为这些是经过PS软件处理出来的？不不不，纯粹的是用css写出来的，很神奇把。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUeOr6qcW9OXbqYp4pribI0vx3TtBIjzA2sBdt4uIdiaseoBs7lNkia8qEQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_jpg/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUeVNib7icTbV168s8DxUlOIXiawZ1ich0zEic1RPjTGKRmy0LcbhpS6aHZnA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUwkn2iapNGGZ11rlSnf5udoephrtsPnOS31DeicuwNQFibYwribToRUwibDw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUsSQJ4BJ9OdW1uibC5uBWSOoNfLzGQU6icuSO85esibibYMMOgqysM51Lag/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUb4epYBZZzP4SqibDILaNopvrpa7FSHlV2hsonicrvSLFmPKUbJOW1gbg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUeKYTUonMmib7d3VWD99lOwWL4QH6mAcKNsTYo4y22asbFwOCicoGMq1A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUDap70z7gcQrjwM967vCqMTqKfX0IKgG2hnlJarciaVLKuVnlZlWv0mQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUUk46UqCicvibM896s5TzsyibmWcQzOiaH0hhyZZVsFJ03AP4Xs9OdpOP7g/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUBWpx9JZbZ4DQ0AV0iaSE5IFNnCcgicXE9OHibMZF0zz7wmXrchcylFUuw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQU1icGCC9gLMnQf7H3xyZXmb06l3bO0TzVDlbRN3ibZouR9TJ8FGibnltYg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQU0PjA1V9M2RLHRnONrYHF6X6nmDRfdSUVBiaTb8jYtUaSoYvsAcAy59A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUyvOI2vOpnycBHHdHt7CXS3rkXdkF9iaguiaOW0cWdKRKm1l56ibUNxic9w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUvq9Zp4iacyDMAdumibkHv9NyMDMvvwoyRZ4jHtpeI7uqUvQwgAwfTVfA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUvxHazaibz58acaSZGoicicbKxE9iawv6ViaiaCkaUSnHXwob8uwJ82g10wuQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUE6C2hjmt3YHfkqexOOKAiaYf9WJp83GyvhGvDD2sVDbyXFSeeKbIh4g/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="article:published_time" content="2018-11-07T09:00:38.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.317Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="css">
+<meta property="article:tag" content="filter">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUeOr6qcW9OXbqYp4pribI0vx3TtBIjzA2sBdt4uIdiaseoBs7lNkia8qEQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/css-change-color/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/css-change-color/","path":"css-change-color/","title":"利用CSS改变图片颜色的100种方法！"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>利用CSS改变图片颜色的100种方法！ | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%BA%E5%A4%A7%E7%9A%84-CSS-filter"><span class="nav-number">2.</span> <span class="nav-text">强大的 CSS:filter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#filter-none"><span class="nav-number">2.1.</span> <span class="nav-text">filter: none</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#filter-blur-%E9%AB%98%E6%96%AF%E6%A8%A1%E7%B3%8A"><span class="nav-number">2.2.</span> <span class="nav-text">filter:blur( ) 高斯模糊</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#brightness-%E7%BA%BF%E6%80%A7%E4%B9%98%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">brightness(%) 线性乘法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#contrast-%E5%AF%B9%E6%AF%94%E5%BA%A6"><span class="nav-number">2.4.</span> <span class="nav-text">contrast(%) 对比度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#drop-shadow-h-shadow-v-shadow-blur-spread-color"><span class="nav-number">2.5.</span> <span class="nav-text">drop-shadow(h-shadow v-shadow blur spread color)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hue-rotate-deg-%E8%89%B2%E7%9B%B8%E6%97%8B%E8%BD%AC"><span class="nav-number">2.6.</span> <span class="nav-text">hue-rotate(deg) 色相旋转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#invert-%E5%8F%8D%E8%BD%AC"><span class="nav-number">2.7.</span> <span class="nav-text">invert(%) 反转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#grayscale-%E5%B0%86%E5%9B%BE%E5%83%8F%E8%BD%AC%E6%8D%A2%E4%B8%BA%E7%81%B0%E5%BA%A6%E5%9B%BE%E5%83%8F"><span class="nav-number">2.8.</span> <span class="nav-text">grayscale(%) 将图像转换为灰度图像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sepia-%E5%B0%86%E5%9B%BE%E5%83%8F%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%B7%B1%E8%A4%90%E8%89%B2"><span class="nav-number">2.9.</span> <span class="nav-text">sepia(%) 将图像转换为深褐色</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%88%E6%9E%81%E5%8F%98%E8%89%B2%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%81-filter-url"><span class="nav-number">3.</span> <span class="nav-text">终极变色解决方案！ filter:url();</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#svg-feColorMatrix%E5%A4%A7%E6%B3%95%E5%A5%BD"><span class="nav-number">3.1.</span> <span class="nav-text">svg feColorMatrix大法好</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E5%9B%BE%E7%89%87%E8%BD%AC%E4%B8%BA%E5%8D%95%E8%89%B2-%E6%8B%BF%E6%A3%95%E8%89%B2rgba-140-59-0-1-%E4%BD%9C%E4%B8%BA%E4%BE%8B%E5%AD%90"><span class="nav-number">3.2.</span> <span class="nav-text">将图片转为单色 拿棕色rgba(140,59,0,1)作为例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E9%80%9A%E9%81%93%E8%AE%BE%E7%BD%AE%E5%87%BA%E7%82%AB%E9%85%B7%E7%9A%84%E6%95%88%E6%9E%9C%E6%9D%A5"><span class="nav-number">3.3.</span> <span class="nav-text">多通道设置出炫酷的效果来</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%A1%88"><span class="nav-number">3.4.</span> <span class="nav-text">其他方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F"><span class="nav-number">5.</span> <span class="nav-text">注意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-number">7.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/css-change-color/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="利用CSS改变图片颜色的100种方法！ | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          利用CSS改变图片颜色的100种方法！
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-07 17:00:38" itemprop="dateCreated datePublished" datetime="2018-11-07T17:00:38+08:00">2018-11-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CSS/" itemprop="url" rel="index"><span itemprop="name">CSS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><blockquote>
+<p>“说到对图片进行处理，我们经常会想到PhotoShop这类的图像处理工具。作为前端开发者，我们经常会需要处理一些特效，例如根据不同的状态，让图标显示不同的颜色。或者是hover的时候，对图片的对比度，阴影进行处理。”</p>
+<p>本文略长，请耐心阅读</p>
+</blockquote>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUeOr6qcW9OXbqYp4pribI0vx3TtBIjzA2sBdt4uIdiaseoBs7lNkia8qEQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<p>你以为这些是经过PS软件处理出来的？不不不，纯粹的是用css写出来的，很神奇把。 </p>
+<span id="more"></span>
+<h3 id="强大的-CSS-filter"><a href="#强大的-CSS-filter" class="headerlink" title="强大的 CSS:filter"></a>强大的 CSS:filter</h3><p>CSS滤镜（filter）属提供的图形特效，像模糊，锐化或元素变色。过滤器通常被用于调整图片，背景和边界的渲染。 MDN</p>
+<p>CSS标准里包含了一些已实现预定义效果的函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">filter: none        </span><br><span class="line">    | blur() </span><br><span class="line">    | brightness() </span><br><span class="line">    | contrast() </span><br><span class="line">    | drop-shadow() </span><br><span class="line">    | grayscale() </span><br><span class="line">    | hue-rotate() </span><br><span class="line">    | invert() </span><br><span class="line">    | opacity() </span><br><span class="line">    | saturate() </span><br><span class="line">    | sepia() </span><br><span class="line">    | url();</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUeVNib7icTbV168s8DxUlOIXiawZ1ich0zEic1RPjTGKRmy0LcbhpS6aHZnA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<h4 id="filter-none"><a href="#filter-none" class="headerlink" title="filter: none"></a><strong>filter: none</strong></h4><p>没有任何效果，默认filter就为none</p>
+<h4 id="filter-blur-高斯模糊"><a href="#filter-blur-高斯模糊" class="headerlink" title="filter:blur( ) 高斯模糊"></a><strong>filter:blur( ) 高斯模糊</strong></h4><p>给图像一个高斯模糊效果，length值越大，图像越模糊</p>
+<p>我们来尝试一下</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">blur</span>(<span class="number">2px</span>);;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUwkn2iapNGGZ11rlSnf5udoephrtsPnOS31DeicuwNQFibYwribToRUwibDw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<h4 id="brightness-线性乘法"><a href="#brightness-线性乘法" class="headerlink" title="brightness(%) 线性乘法"></a><strong>brightness(%) 线性乘法</strong></h4><p>可以让图片看起来更亮或者更暗</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">brightness</span>(<span class="number">70%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUsSQJ4BJ9OdW1uibC5uBWSOoNfLzGQU6icuSO85esibibYMMOgqysM51Lag/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<h4 id="contrast-对比度"><a href="#contrast-对比度" class="headerlink" title="contrast(%) 对比度"></a><strong>contrast(%) 对比度</strong></h4><p>调整图像的对比度。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">contrast</span>(<span class="number">50%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUb4epYBZZzP4SqibDILaNopvrpa7FSHlV2hsonicrvSLFmPKUbJOW1gbg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<h4 id="drop-shadow-h-shadow-v-shadow-blur-spread-color"><a href="#drop-shadow-h-shadow-v-shadow-blur-spread-color" class="headerlink" title="drop-shadow(h-shadow v-shadow blur spread color)"></a><strong>drop-shadow(h-shadow v-shadow blur spread color)</strong></h4><p>给图像设置一个阴影效果。阴影是合成在图像下面，可以有模糊度的，可以以特定颜色画出的遮罩图的偏移版本。 函数接受<shadow>(在CSS3背景中定义)类型的值，除了”inset”关键字是不允许的。该函数与已有的box-shadow box-shadow属性很相似；不同之处在于，通过滤镜，一些浏览器为了更好的性能会提供硬件加速</p>
+<p>利用这个方案，我们其实改变类似于一些图标的颜色，比如黑色的图标变成蓝色的图标。</p>
+<p>PNG格式小图标的CSS任意颜色赋色技术</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>: <span class="built_in">drop-shadow</span>(<span class="number">705px</span> <span class="number">0</span> <span class="number">0</span> <span class="number">#ccc</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，我们将图片投影形成一个同等大小的灰色区域。 </p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUeKYTUonMmib7d3VWD99lOwWL4QH6mAcKNsTYo4y22asbFwOCicoGMq1A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<h4 id="hue-rotate-deg-色相旋转"><a href="#hue-rotate-deg-色相旋转" class="headerlink" title="hue-rotate(deg) 色相旋转"></a><strong>hue-rotate(deg) 色相旋转</strong></h4><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">hue-rotate</span>(<span class="number">70deg</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看，我的小姐姐变成了阿凡达！ </p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUDap70z7gcQrjwM967vCqMTqKfX0IKgG2hnlJarciaVLKuVnlZlWv0mQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<h4 id="invert-反转"><a href="#invert-反转" class="headerlink" title="invert(%) 反转"></a><strong>invert(%) 反转</strong></h4><p>这个函数的作用是反转输入图像，有点像曝光的效果</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">invert</span>(<span class="number">100%</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUUk46UqCicvibM896s5TzsyibmWcQzOiaH0hhyZZVsFJ03AP4Xs9OdpOP7g/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<h4 id="grayscale-将图像转换为灰度图像"><a href="#grayscale-将图像转换为灰度图像" class="headerlink" title="grayscale(%) 将图像转换为灰度图像"></a><strong>grayscale(%) 将图像转换为灰度图像</strong></h4><p>这个效果可以将图片做旧，有一种时代沧桑感。喜欢古风的人一定会喜欢上这个效果的</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">grayscale</span>(<span class="number">80%</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUBWpx9JZbZ4DQ0AV0iaSE5IFNnCcgicXE9OHibMZF0zz7wmXrchcylFUuw/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<p>除了古风还有一种用法是有的时候需要将全站变成灰色，如大屠杀纪念日的时候。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQU1icGCC9gLMnQf7H3xyZXmb06l3bO0TzVDlbRN3ibZouR9TJ8FGibnltYg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<p>可以这样设置</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">*&#123;</span><br><span class="line">    <span class="attribute">filter</span>: <span class="built_in">grayscale</span>(<span class="number">100%</span>);</span><br><span class="line">    -webkit-<span class="attribute">filter</span>: <span class="built_in">grayscale</span>(<span class="number">100%</span>);</span><br><span class="line">    -moz-<span class="attribute">filter</span>: <span class="built_in">grayscale</span>(<span class="number">100%</span>);</span><br><span class="line">    -ms-<span class="attribute">filter</span>: <span class="built_in">grayscale</span>(<span class="number">100%</span>);</span><br><span class="line">    -o-<span class="attribute">filter</span>: <span class="built_in">grayscale</span>(<span class="number">100%</span>);</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h4 id="sepia-将图像转换为深褐色"><a href="#sepia-将图像转换为深褐色" class="headerlink" title="sepia(%) 将图像转换为深褐色"></a><strong>sepia(%) 将图像转换为深褐色</strong></h4><p>下面给我的小姐姐一个暖暖的色调。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">sepia</span>(<span class="number">50%</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQU0PjA1V9M2RLHRnONrYHF6X6nmDRfdSUVBiaTb8jYtUaSoYvsAcAy59A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<p>大家是不是发现我并没有把url()方法写到这上面来</p>
+<p>没错，因为我想把这个内容放到最后来说，filter:url()就是css滤镜改变图片的终极方法。CSS:filter可以导入一个svg滤镜，作为他自己的滤镜。</p>
+<h3 id="终极变色解决方案！-filter-url"><a href="#终极变色解决方案！-filter-url" class="headerlink" title="终极变色解决方案！ filter:url();"></a>终极变色解决方案！ filter:url();</h3><p>为什么说filter:url()是图片变色的终极解决方案呢，请容我慢慢道来。</p>
+<p>我们先科普一下PS的工作原理，我们都知道网页是有三原色的R(红) G(绿) B(蓝)，常见的RGBA还包括一个opicity值，而opcity值是根据alpha通道计算出来的。也就是说，我们见到的网页的每一个像素点都是由红蓝绿再加alpha四个通道组成，每一个通道我们称之为色板，PS中的8位板的意思就是2的八次方256，意思就是每一个通道的取值范围都是(0-255) –SVG 研究之路 (11) - filter:feColorMatrix</p>
+<p>如果我们可以改变每个通道的值是不是就能完美的得到我们想要的任意颜色了呢，原理上，我们可以像ps那样利用svg滤镜得到任何我们想要的图像，不仅仅是变色。我们甚至可以凭空生成一幅图像。</p>
+<h4 id="svg-feColorMatrix大法好"><a href="#svg-feColorMatrix大法好" class="headerlink" title="svg feColorMatrix大法好"></a><strong>svg feColorMatrix大法好</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;svg height=&quot;0&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;</span><br><span class="line">    &lt;defs&gt;</span><br><span class="line">        &lt;filter id=&quot;change&quot;&gt;</span><br><span class="line">                &lt;feColorMatrix type=&quot;matrix&quot; values=&quot;</span><br><span class="line">                0 0 0 0 0.55</span><br><span class="line">                0 0 0 0 0.23 </span><br><span class="line">                0 0 0 0 0 </span><br><span class="line">                0 0 0 0 1&quot; /&gt;</span><br><span class="line">        &lt;/filter&gt;</span><br><span class="line">    &lt;/defs&gt;</span><br><span class="line">&lt;/svg&gt;</span><br><span class="line">&lt;img src=&quot;https://note.youdao.com/yws/res/237/WEBRESOURCE7e77df2551fe1a1db1b9d91f4d518917&quot; alt=&quot;&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">img</span> &#123;</span><br><span class="line">    <span class="attribute">filter</span>:<span class="built_in">url</span>(<span class="string">#change</span>);</span><br><span class="line">&#125; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>通过单通道我们可以将图片变成单一的颜色 </p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUyvOI2vOpnycBHHdHt7CXS3rkXdkF9iaguiaOW0cWdKRKm1l56ibUNxic9w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;svg height=&quot;0&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;</span><br><span class="line">    &lt;defs&gt;</span><br><span class="line">        &lt;filter id=&quot;change&quot;&gt;</span><br><span class="line">               &lt;feColorMatrix values=&quot;3 -1 -1 0 0</span><br><span class="line">                       -1 3 -1 0 0</span><br><span class="line">                       -1 -1 3 0 0</span><br><span class="line">                       0 0 0 1 0&quot; /&gt;</span><br><span class="line">        &lt;/filter&gt;</span><br><span class="line">    &lt;/defs&gt;</span><br><span class="line">&lt;/svg&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>通过双通道我们可以的到一些非常炫酷的PS效果</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUvq9Zp4iacyDMAdumibkHv9NyMDMvvwoyRZ4jHtpeI7uqUvQwgAwfTVfA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<p>当然，在这里，只是举个例子，通过配置矩阵中的值，我们可以配置每一个像素点的值按照我们定义的规则显示</p>
+<p>我们在这里详细讲一下feColorMatrix 矩阵的计算方式</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUvxHazaibz58acaSZGoicicbKxE9iawv6ViaiaCkaUSnHXwob8uwJ82g10wuQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+<p>其中Rin Gi</p>
+<p>n Bin a(alpha) 为原始图片中每个像素点的rgba值</p>
+<p>通过矩阵计算，得到的Rout Gout Bout Aout就是最终显示出来的rgba值。</p>
+<h4 id="将图片转为单色-拿棕色rgba-140-59-0-1-作为例子"><a href="#将图片转为单色-拿棕色rgba-140-59-0-1-作为例子" class="headerlink" title="将图片转为单色 拿棕色rgba(140,59,0,1)作为例子"></a>将图片转为单色 拿棕色rgba(140,59,0,1)作为例子</h4><p>根据上面的公式，我们可以简化一些计算，同一行中，只设置一个通道的值，其他通道为0</p>
+<p>不难得出矩阵</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 0 0 0 目标值R</span><br><span class="line">0 0 0 0 目标值G</span><br><span class="line">0 0 0 0 目标值B</span><br><span class="line">0 0 0 0 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>根据规则，只需要计算，255&#x2F;想要显示的颜色对应通道 &#x3D; 目标值</p>
+<p>我们想要的棕色rgba(140,59,0,1) 换算成色板 rgba 为 140 59 0 255</p>
+<p>可以算出目标值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0 0 0 0 0.55</span><br><span class="line">0 0 0 0 0.23</span><br><span class="line">0 0 0 0 0 </span><br><span class="line">0 0 0 0 1</span><br></pre></td></tr></table></figure>
+
+<h4 id="多通道设置出炫酷的效果来"><a href="#多通道设置出炫酷的效果来" class="headerlink" title="多通道设置出炫酷的效果来"></a>多通道设置出炫酷的效果来</h4><p>就如同之前我们看到的双通道形成的炫酷图片一般</p>
+<blockquote>
+<p>我們今天要把圖片的飽和度提高，該怎麼做呢？首先當然是想想飽和度的成因，就是紅的越紅，藍的越藍，綠的越綠，由這個成因出發，我們的矩陣就可以寫成下面的樣子，看到矩陣當中出現了 3 和 -1，一定會很那悶這是怎麼來的，箇中原理其實很容易理解，讓我們假設某一個像素的 RGB 分別是 (200&#x2F;255),(100&#x2F;255),(50&#x2F;255)，呈現的應該是有點暗沉的橘色，經過矩陣的換算，R 變成了 200&#x2F;255x3-100&#x2F;255-50&#x2F;255&#x3D; 1.76, G 變成 200&#x2F;255x(-1)+100&#x2F;255*3-50&#x2F;255&#x3D;0.2，B 變成 200x(-1)+100x(-1)+50x3&#x3D;-0.59，因此 RGB 轉換後就是：200x1.76,100x0.2,50x-0.5。SVG 研究之路 (11) - filter:feColorMatrix</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;svg height=&quot;0&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;</span><br><span class="line">    &lt;defs&gt;</span><br><span class="line">        &lt;filter id=&quot;change&quot;&gt;</span><br><span class="line">               &lt;feColorMatrix values=&quot;3 -1 -1 0 0</span><br><span class="line">                       -1 3 -1 0 0</span><br><span class="line">                       -1 -1 3 0 0</span><br><span class="line">                       0 0 0 1 0&quot; /&gt;</span><br><span class="line">        &lt;/filter&gt;</span><br><span class="line">    &lt;/defs&gt;</span><br><span class="line">&lt;/svg&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="其他方案"><a href="#其他方案" class="headerlink" title="其他方案"></a>其他方案</h4><p>除了feColorMatrix svg滤镜还有很多的方法可以定义滤镜，他们同样可以作用到图片上。由于篇幅限制，这里就不详细展开了</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><p>css3提供了filter这个属性，使得通过前端技术实现更多炫酷的特效成为了可能</p>
+</li>
+<li><p>依赖于svg的滤镜，我们可以实现复杂的滤镜效果</p>
+</li>
+</ul>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
+<li><p>css：filter与ie上的filter并不是相同的概念</p>
+</li>
+<li><p>css:filter在不同的浏览器上兼容性不一样，您在使用的时候需要注意浏览器的兼容性 </p>
+</li>
+<li><p><img src="https://mmbiz.qpic.cn/mmbiz_png/12mPmHVcSulMDl8IsL3PkRVPHH5eFHQUE6C2hjmt3YHfkqexOOKAiaYf9WJp83GyvhGvDD2sVDbyXFSeeKbIh4g/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"></p>
+</li>
+</ul>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ul>
+<li><p>SVG 研究之路 (11) - filter:feColorMatrix</p>
+</li>
+<li><p>css:filter MDN</p>
+</li>
+<li><p>Color Filters Can Turn Your Gray Skies Blue</p>
+</li>
+<li><p>PNG格式小图标的CSS任意颜色赋色技术</p>
+</li>
+</ul>
+<h3 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h3><p>本次源码我已经放在了<a target="_blank" rel="noopener" href="https://codepen.io/nanhupatar/pen/eLQoVM">codePen</a>上 欢迎查看</p>
+<p>文章难免会有疏漏，希望大家能够指正批评</p>
+<p>原文出处： <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/_8vpfui02sW7DFG-1TXnsw">前端指南</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/css/" rel="tag"># css</a>
+              <a href="/tags/filter/" rel="tag"># filter</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/redis-introduction-3/" rel="prev" title="Redis 入门 - 3（集合 set、有序集合 sort set）">
+                  <i class="fa fa-angle-left"></i> Redis 入门 - 3（集合 set、有序集合 sort set）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/common-use-api/" rel="next" title="【大数据分析必备】超全国内常用API接口汇总">
+                  【大数据分析必备】超全国内常用API接口汇总 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

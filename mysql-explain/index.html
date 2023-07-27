@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Explain有什么用当Explain与SQL语句一起使用时，MySQL会显示来自优化器关于SQL执行的信息。也就是说，MySQL解释了它将如何处理该语句，包括如何连接表以及什么顺序连接表等。  表的加载顺序 sql的查询类型 可能用到哪些索引，哪些索引又被实际使用 表与表之间的引用关系 一个表中有多少行被优化器查询">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL Explain 执行计划">
+<meta property="og:url" content="https://xqmgithub.github.io/mysql-explain/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="Explain有什么用当Explain与SQL语句一起使用时，MySQL会显示来自优化器关于SQL执行的信息。也就是说，MySQL解释了它将如何处理该语句，包括如何连接表以及什么顺序连接表等。  表的加载顺序 sql的查询类型 可能用到哪些索引，哪些索引又被实际使用 表与表之间的引用关系 一个表中有多少行被优化器查询">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-16T10:30:20.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.332Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="explain">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/mysql-explain/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/mysql-explain/","path":"mysql-explain/","title":"MySQL Explain 执行计划"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL Explain 执行计划 | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Explain%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">Explain有什么用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Explain%E6%9C%89%E5%93%AA%E4%BA%9B%E4%BF%A1%E6%81%AF"><span class="nav-number">2.</span> <span class="nav-text">Explain有哪些信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Explain%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92%E8%AF%A6%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">Explain执行计划详解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#id"><span class="nav-number">3.1.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#select-type"><span class="nav-number">3.2.</span> <span class="nav-text">select_type</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#table"><span class="nav-number">3.3.</span> <span class="nav-text">table</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#partitions"><span class="nav-number">3.4.</span> <span class="nav-text">partitions</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#type"><span class="nav-number">3.5.</span> <span class="nav-text">type</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#possible-keys"><span class="nav-number">3.6.</span> <span class="nav-text">possible_keys</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#key"><span class="nav-number">3.7.</span> <span class="nav-text">key</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#key-len"><span class="nav-number">3.8.</span> <span class="nav-text">key_len</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ref"><span class="nav-number">3.9.</span> <span class="nav-text">ref</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#rows"><span class="nav-number">3.10.</span> <span class="nav-text">rows</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#filtered"><span class="nav-number">3.11.</span> <span class="nav-text">filtered</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Extra"><span class="nav-number">3.12.</span> <span class="nav-text">Extra</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/mysql-explain/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL Explain 执行计划 | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL Explain 执行计划
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-06-16 18:30:20" itemprop="dateCreated datePublished" datetime="2020-06-16T18:30:20+08:00">2020-06-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySql/" itemprop="url" rel="index"><span itemprop="name">MySql</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="Explain有什么用"><a href="#Explain有什么用" class="headerlink" title="Explain有什么用"></a><strong>Explain有什么用</strong></h4><p>当<code>Explain</code>与<code>SQL</code>语句一起使用时，<code>MySQL</code>会显示来自优化器关于<code>SQL</code>执行的信息。<br>也就是说，<code>MySQL</code>解释了它将如何处理该语句，包括如何连接表以及什么顺序连接表等。</p>
+<ul>
+<li>表的加载顺序</li>
+<li><code>sql</code>的查询类型</li>
+<li>可能用到哪些索引，哪些索引又被实际使用</li>
+<li>表与表之间的引用关系</li>
+<li>一个表中有多少行被优化器查询</li>
+</ul>
+<span id="more"></span>
+
+<h4 id="Explain有哪些信息"><a href="#Explain有哪些信息" class="headerlink" title="Explain有哪些信息"></a><strong>Explain有哪些信息</strong></h4><p>Explain执行计划包含字段信息如下：<br>分别是 <code>id</code>、<code>select_type</code>、<code>table</code>、<code>partitions</code>、<code>type</code>、<code>possible_keys</code>、<code>key</code>、<code>key_len</code>、<code>ref</code>、<code>rows</code>、<code>filtered</code>、<code>Extra</code>12个字段。</p>
+<p>下边会结合具体的<code>SQL</code>示例，详细的解读每个字段以及每个字段中不同参数的含义，以下所有示例数据库版本为 <code>MySQL.5.7.18</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select version();</span><br><span class="line">+-----------+</span><br><span class="line">| version() |</span><br><span class="line">+-----------+</span><br><span class="line">| 5.7.18    |</span><br><span class="line">+-----------+</span><br></pre></td></tr></table></figure>
+<p>创建三张表 <code>one</code>、<code>two</code>、<code>three</code>，<br>表之间的关系 <code>one.two_id = two.two_id AND two.three_id = three.three_id</code></p>
+<h4 id="Explain执行计划详解"><a href="#Explain执行计划详解" class="headerlink" title="Explain执行计划详解"></a><strong>Explain执行计划详解</strong></h4><h5 id="id"><a href="#id" class="headerlink" title="id"></a>id</h5><p>id: 表示查询中执行select子句或者操作表的顺序，**<code>id</code>的值越大，代表优先级越高，越先执行**。id大致会出现 3种情况：</p>
+<ul>
+<li><p>id相同<br>看到三条记录的<code>id</code>都相同，可以理解成这三个表为一组，具有同样的优先级，执行顺序由上而下，具体顺序由优化器决定。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * FROM one o,two t, three r WHERE o.two_id = t.two_id AND t.three_id = r.three_id;</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+---------+---------+----------------------+------+----------+----------------------------------------------------+</span><br><span class="line">| id | select_type | table | partitions | type   | possible_keys | key     | key_len | ref                  | rows | filtered | Extra                                              |</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+---------+---------+----------------------+------+----------+----------------------------------------------------+</span><br><span class="line">|  1 | SIMPLE      | o     | NULL       | ALL    | NULL          | NULL    | NULL    | NULL                 |    2 |      100 | NULL                                               |</span><br><span class="line">|  1 | SIMPLE      | t     | NULL       | ALL    | PRIMARY       | NULL    | NULL    | NULL                 |    2 |       50 | Using where; Using join buffer (Block Nested Loop) |</span><br><span class="line">|  1 | SIMPLE      | r     | NULL       | eq_ref | PRIMARY       | PRIMARY | 4       | xin-slave.t.three_id |    1 |      100 | NULL                                               |</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+---------+---------+----------------------+------+----------+----------------------------------------------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>id不同<br>如果我们的<code>SQL</code>中存在子查询，那么<code>id</code>的序号会递增，id值越大优先级越高，越先被执行 。<br>当三个表依次嵌套，发现最里层的子查询<code>id</code>最大，最先执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN select * from one o where o.two_id = (select t.two_id from two t where t.three_id = (select r.three_id  from three r where r.three_name=&#x27;我是第三表2&#x27;));</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | PRIMARY     | o     | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    2 |       50 | Using where |</span><br><span class="line">|  2 | SUBQUERY    | t     | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    2 |       50 | Using where |</span><br><span class="line">|  3 | SUBQUERY    | r     | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    2 |       50 | Using where |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>以上两种同时存在<br>将上边的<code>SQL</code>稍微修改一下，增加一个子查询，发现<code>id</code>的以上两种同时存在。<br>相同<code>id</code>划分为一组，这样就有三个组，同组的从上往下顺序执行，不同组<code>id</code>值越大，优先级越高，越先执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt;  EXPLAIN select * from one o where o.two_id = (select t.two_id from two t where t.three_id = (select r.three_id  from three r where r.three_name=&#x27;我是第三表2&#x27;)) AND o.one_id in(select one_id from one where o.one_name=&quot;我是第一表2&quot;);</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+---------+---------+--------------------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type   | possible_keys | key     | key_len | ref                | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+---------+---------+--------------------+------+----------+-------------+</span><br><span class="line">|  1 | PRIMARY     | o     | NULL       | ALL    | PRIMARY       | NULL    | NULL    | NULL               |    2 |       50 | Using where |</span><br><span class="line">|  1 | PRIMARY     | one   | NULL       | eq_ref | PRIMARY       | PRIMARY | 4       | xin-slave.o.one_id |    1 |      100 | Using index |</span><br><span class="line">|  2 | SUBQUERY    | t     | NULL       | ALL    | NULL          | NULL    | NULL    | NULL               |    2 |       50 | Using where |</span><br><span class="line">|  3 | SUBQUERY    | r     | NULL       | ALL    | NULL          | NULL    | NULL    | NULL               |    2 |       50 | Using where |</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+---------+---------+--------------------+------+----------+-------------+</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="select-type"><a href="#select-type" class="headerlink" title="select_type"></a>select_type</h5><p><code>select_type</code>： 表示<code>select</code>查询的类型，主要是用于区分各种复杂的查询，例如：普通查询、联合查询、子查询等。</p>
+<ul>
+<li><p>SIMPLE<br><code>SIMPLE</code>：表示最简单的<code>select</code>查询语句，也就是在查询中不包含子查询或者<code>union</code>交并差集等操作。</p>
+</li>
+<li><p>PRIMARY<br><code>PRIMARY</code>：当查询语句中包含任何复杂的子部分，最外层查询则被标记为<code>PRIMARY</code>。</p>
+</li>
+<li><p>SUBQUERY<br><code>SUBQUERY</code>：当<code>select</code>或<code>where</code>列表中包含了子查询，该子查询被标记为：<code>SUBQUERY</code>。</p>
+</li>
+<li><p>DERIVED<br><code>DERIVED</code>：表示包含在<code>from</code>子句中的子查询的<code>select</code>，在我们的<code>from</code>列表中包含的子查询会被标记为<code>derived</code>。</p>
+</li>
+<li><p>UNION<br><code>UNION</code>：如果<code>union</code>后边又出现的<code>select</code>语句，则会被标记为<code>union</code>；<br>若<code>union</code>包含在<code>from</code>子句的子查询中，外层<code>select</code>将被标记为<code>derived</code>。</p>
+</li>
+<li><p>UNION RESULT<br><code>UNION RESULT</code>：代表从<code>union</code>的临时表中读取数据，<br>而<code>table</code>列的<code>&lt;union1,4&gt;</code>表示用第一个和第四个<code>select</code>的结果进行<code>union</code>操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN select t.two_name, ( select one.one_id from one) o from (select two_id,two_name from two where two_name =&#x27;&#x27;) t  union (select r.three_name,r.three_id from three r);</span><br><span class="line"></span><br><span class="line">+------+--------------+------------+------------+-------+---------------+---------+---------+------+------+----------+-----------------+</span><br><span class="line">| id   | select_type  | table      | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra           |</span><br><span class="line">+------+--------------+------------+------------+-------+---------------+---------+---------+------+------+----------+-----------------+</span><br><span class="line">|    1 | PRIMARY      | two        | NULL       | ALL   | NULL          | NULL    | NULL    | NULL |    2 |       50 | Using where     |</span><br><span class="line">|    2 | SUBQUERY     | one        | NULL       | index | NULL          | PRIMARY | 4       | NULL |    2 |      100 | Using index     |</span><br><span class="line">|    4 | UNION        | r          | NULL       | ALL   | NULL          | NULL    | NULL    | NULL |    2 |      100 | NULL            |</span><br><span class="line">| NULL | UNION RESULT | &lt;union1,4&gt; | NULL       | ALL   | NULL          | NULL    | NULL    | NULL | NULL | NULL     | Using temporary |</span><br><span class="line">+------+--------------+------------+------------+-------+---------------+---------+---------+------+------+----------+-----------------+</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="table"><a href="#table" class="headerlink" title="table"></a>table</h5><p>查询的表名，并不一定是真实存在的表，有别名显示别名，也可能为临时表，例如上边的<code>DERIVED</code>、<code>&lt;union1,4&gt;</code>等。</p>
+<h5 id="partitions"><a href="#partitions" class="headerlink" title="partitions"></a>partitions</h5><p>查询时匹配到的分区信息，对于非分区表值为<code>NULL</code>，当查询的是分区表时，<code>partitions</code>显示分区表命中的分区情况。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+----+-------------+----------------+---------------------------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table          | partitions                      | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+----------------+---------------------------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | one            | p201801,p201802,p201803,p300012 | index | NULL          | PRIMARY | 9       | NULL |    3 |      100 | Using index |</span><br><span class="line">+----+-------------+----------------+---------------------------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+
+<h5 id="type"><a href="#type" class="headerlink" title="type"></a>type</h5><p><code>type</code>：查询使用了何种类型，它在<code>SQL</code>优化中是一个非常重要的指标，<br>以下性能从好到坏依次是：<br><code>system</code> &gt; <code>const</code> &gt; <code>eq_ref</code> &gt; <code>ref</code> &gt; <code>ref_or_null</code> &gt; <code>index_merge</code> &gt; <code>unique_subquery</code> &gt; <code>index_subquery</code> &gt; <code>range</code> &gt; <code>index</code> &gt; <code>ALL</code></p>
+<ul>
+<li><p>system<br><code>system</code>： 当表仅有一行记录时(系统表)，数据量很少，往往不需要进行磁盘IO，速度非常快。</p>
+</li>
+<li><p>const<br><code>const</code>：表示查询时命中<code>primary key</code>主键或者<code>unique</code>唯一索引，或者被连接的部分是一个常量(<code>const</code>)值。<br>这类扫描效率极高，返回数据量少，速度非常快。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * from three where three_id=1;</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+</span><br><span class="line">| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+</span><br><span class="line">|  1 | SIMPLE      | three | NULL       | const | PRIMARY       | PRIMARY | 4       | const |    1 |      100 | NULL  |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>eq_ref<br><code>eq_ref</code>：查询时命中主键<code>primary key</code>或者<code>unique key</code>索引，<code>type</code>就是<code>eq_ref</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN select o.one_name from one o ,two t where o.one_id = t.two_id ; </span><br><span class="line">+----+-------------+-------+------------+--------+---------------+----------+---------+--------------------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type   | possible_keys | key      | key_len | ref                | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+----------+---------+--------------------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | o     | NULL       | index  | PRIMARY       | idx_name | 768     | NULL               |    2 |      100 | Using index |</span><br><span class="line">|  1 | SIMPLE      | t     | NULL       | eq_ref | PRIMARY       | PRIMARY  | 4       | xin-slave.o.one_id |    1 |      100 | Using index |</span><br><span class="line">+----+-------------+-------+------------+--------+---------------+----------+---------+--------------------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ref<br><code>ref</code>：区别于<code>eq_ref</code>，<code>ref</code>表示使用非唯一性索引，会找到很多个符合条件的行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select o.one_id from one o where o.one_name = &quot;xin&quot; ; </span><br><span class="line">+--------+</span><br><span class="line">| one_id |</span><br><span class="line">+--------+</span><br><span class="line">|      1 |</span><br><span class="line">|      3 |</span><br><span class="line">+--------+</span><br><span class="line"></span><br><span class="line">mysql&gt; EXPLAIN select o.one_id from one o where o.one_name = &quot;xin&quot; ; </span><br><span class="line">+----+-------------+-------+------------+------+---------------+----------+---------+-------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key      | key_len | ref   | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+----------+---------+-------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | o     | NULL       | ref  | idx_name      | idx_name | 768     | const |    1 |      100 | Using index |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+----------+---------+-------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ref_or_null<br><code>ref_or_null</code>：这种连接类型类似于 <code>ref</code>，区别在于<code>MySQL</code>会额外搜索包含<code>NULL</code>值的行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN select o.one_id from one o where o.one_name = &quot;xin&quot; OR o.one_name IS NULL; </span><br><span class="line">+----+-------------+-------+------------+-------------+---------------+----------+---------+-------+------+----------+--------------------------+</span><br><span class="line">| id | select_type | table | partitions | type        | possible_keys | key      | key_len | ref   | rows | filtered | Extra                    |</span><br><span class="line">+----+-------------+-------+------------+-------------+---------------+----------+---------+-------+------+----------+--------------------------+</span><br><span class="line">|  1 | SIMPLE      | o     | NULL       | ref_or_null | idx_name      | idx_name | 768     | const |    3 |      100 | Using where; Using index |</span><br><span class="line">+----+-------------+-------+------------+-------------+---------------+----------+---------+-------+------+----------+--------------------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>index_merge<br><code>index_merge</code>：使用了索引合并优化方法，查询使用了两个以上的索引。<br>下边示例中同时使用到主键<code>one_id</code>和 字段<code>one_name</code>的<code>idx_name</code>索引 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN select * from one o where o.one_id &gt;1 and o.one_name =&#x27;xin&#x27;; </span><br><span class="line">+----+-------------+-------+------------+-------------+------------------+------------------+---------+------+------+----------+------------------------------------------------+</span><br><span class="line">| id | select_type | table | partitions | type        | possible_keys    | key              | key_len | ref  | rows | filtered | Extra                                          |</span><br><span class="line">+----+-------------+-------+------------+-------------+------------------+------------------+---------+------+------+----------+------------------------------------------------+</span><br><span class="line">|  1 | SIMPLE      | o     | NULL       | index_merge | PRIMARY,idx_name | idx_name,PRIMARY | 772,4   | NULL |    1 |      100 | Using intersect(idx_name,PRIMARY); Using where |</span><br><span class="line">+----+-------------+-------+------------+-------------+------------------+------------------+---------+------+------+----------+------------------------------------------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>unique_subquery<br><code>unique_subquery</code>：替换下面的<code>IN</code>子查询，子查询返回不重复的集合。<br><code>value IN (SELECT primary_key FROM single_table WHERE some_expr)</code></p>
+</li>
+<li><p>index_subquery<br><code>index_subquery</code>：区别于<code>unique_subquery</code>，用于非唯一索引，可以返回重复值。<br><code>value IN (SELECT key_column FROM single_table WHERE some_expr)</code></p>
+</li>
+<li><p>range<br><code>range</code>：使用索引选择行，仅检索给定范围内的行。简单点说就是针对一个有索引的字段，给定范围检索数据。<br>在<code>where</code>语句中使用<code>bettween...and</code>、<code>&lt;</code>、<code>&gt;</code>、<code>&lt;=</code>、<code>in</code>等条件查询<code>type</code>都是<code>range</code>。<br>举个栗子：<code>three</code>表中<code>three_id</code>为唯一主键，<code>user_id</code>普通字段未建索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * from three where three_id BETWEEN 2 AND 3;</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | three | NULL       | range | PRIMARY       | PRIMARY | 4       | NULL |    1 |      100 | Using where |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+<p>从结果中看到只有对设置了索引的字段，做范围检索<code>type</code>才是<code>range</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * from three where user_id BETWEEN 2 AND 3;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | three | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    3 |    33.33 | Using where |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>index<br><code>index</code>：<code>Index</code>与<code>ALL</code>其实都是读全表，区别在于<code>index</code>是遍历索引树读取，而<code>ALL</code>是从硬盘中读取。<br>下边示例：<code>three_id</code>为主键，不带<code>where</code>条件全表查询，<code>type</code>结果为<code>index</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT three_id from three ;</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | three | NULL       | index | NULL          | PRIMARY | 4       | NULL |    1 |      100 | Using index |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ALL<br><code>ALL</code>：将遍历全表以找到匹配的行，性能最差。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * from two ;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br><span class="line">|  1 | SIMPLE      | two   | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    2 |      100 | NULL  |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="possible-keys"><a href="#possible-keys" class="headerlink" title="possible_keys"></a>possible_keys</h5><p><code>possible_keys</code>：表示在<code>MySQL</code>中通过哪些索引，能让我们在表中找到想要的记录，一旦查询涉及到的某个字段上存在索引，<br>则索引将被列出，但这个索引并不定一会是最终查询数据时所被用到的索引。具体请参考上边的例子。</p>
+<h5 id="key"><a href="#key" class="headerlink" title="key"></a>key</h5><p><code>key</code>：区别于<code>possible_keys</code>，<code>key</code>是查询中实际使用到的索引，若没有使用索引，显示为<code>NULL</code>。具体请参考上边的例子。</p>
+<blockquote>
+<p>当type为index_merge时，可能会显示多个索引。</p>
+</blockquote>
+<h5 id="key-len"><a href="#key-len" class="headerlink" title="key_len"></a>key_len</h5><p><code>key_len</code>：表示查询用到的索引长度（字节数），原则上长度越短越好 。</p>
+<ul>
+<li>单列索引，那么需要将整个索引长度算进去；</li>
+<li>多列索引，不是所有列都能用到，需要计算查询中实际用到的列。<blockquote>
+<p>注意：key_len只计算where条件中用到的索引长度，而排序和分组即便是用到了索引，也不会计算到key_len中。</p>
+</blockquote>
+</li>
+</ul>
+<h5 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h5><p><code>ref</code>：常见的有：<code>const</code>，<code>func</code>，<code>null</code>，字段名。</p>
+<ul>
+<li>当使用常量等值查询，显示<code>const</code>，</li>
+<li>当关联查询时，会显示相应关联表的关联字段</li>
+<li>如果查询条件使用了表达式、函数，或者条件列发生内部隐式转换，可能显示为<code>func</code></li>
+<li>其他情况<code>null</code></li>
+</ul>
+<h5 id="rows"><a href="#rows" class="headerlink" title="rows"></a>rows</h5><p><code>rows</code>：以表的统计信息和索引使用情况，估算要找到我们所需的记录，需要读取的行数。<br>这是评估<code>SQL</code>性能的一个比较重要的数据，<code>mysql</code>需要扫描的行数，很直观的显示<code>SQL</code>性能的好坏，一般情况下<code>rows</code>值越小越好。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT * from three;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br><span class="line">|  1 | SIMPLE      | three | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    3 |      100 | NULL  |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br></pre></td></tr></table></figure>
+
+<h5 id="filtered"><a href="#filtered" class="headerlink" title="filtered"></a>filtered</h5><p><code>filtered</code>这个是一个百分比的值，表里符合条件的记录数的百分比。<br>简单点说，这个字段表示存储引擎返回的数据在经过过滤后，剩下满足条件的记录数量的比例。</p>
+<p>在<code>MySQL.5.7</code>版本以前想要显示<code>filtered</code>需要使用<code>explain extended</code>命令。<br><code>MySQL.5.7</code>后，默认<code>explain</code>直接显示<code>partitions</code>和<code>filtered</code>的信息。</p>
+<h5 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h5><p><code>Extra</code>：不适合在其他列中显示的信息，<code>Explain</code>中的很多额外的信息会在<code>Extra</code>字段显示。</p>
+<ul>
+<li><p>Using index<br><code>Using index</code>：我们在相应的<code>select</code>操作中使用了覆盖索引，通俗一点讲就是查询的列被索引覆盖，<br>使用到覆盖索引查询速度会非常快，<code>SQl</code>优化中理想的状态。<br>什么又是覆盖索引?<br>一条<code>SQL</code>只需要通过索引就可以返回，我们所需要查询的数据（一个或几个字段），而不必通过二级索引，<br>查到主键之后再通过主键查询整行数据（<code>select *</code>）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">-- one_id表为主键</span><br><span class="line">mysql&gt; EXPLAIN SELECT one_id from one ;</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type  | possible_keys | key        | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | one   | NULL       | index | NULL          | idx_two_id | 5       | NULL |    3 |      100 | Using index |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+------------+---------+------+------+----------+-------------+</span><br><span class="line">```        </span><br><span class="line">注意：想要使用到覆盖索引，我们在`select`时只取出需要的字段，不可`select *`，而且该字段建了索引。    </span><br><span class="line">```mysql</span><br><span class="line">mysql&gt; EXPLAIN SELECT * from one ;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br><span class="line">|  1 | SIMPLE      | one   | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    3 |      100 | NULL  |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Using where<br><code>Using where</code>：查询时未找到可用的索引，进而通过<code>where</code>条件过滤获取所需数据，<br>但要注意的是并不是所有带<code>where</code>语句的查询都会显示<code>Using where</code>。<br>下边示例<code>create_time</code>并未用到索引，<code>type</code>为<code>ALL</code>，即<code>MySQL</code>通过全表扫描后再按<code>where</code>条件筛选数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT one_name from one where create_time =&#x27;2020-05-18&#x27;;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | one   | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    3 |    33.33 | Using where |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Using temporary<br><code>Using temporary</code>：表示查询后结果需要使用临时表来存储，一般在排序或者分组查询时用到。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT one_name from one where one_id in (1,2) group by one_name;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | one   | NULL       | range| NULL          | NULL | NULL    | NULL |    3 |    33.33 | Using where; Using temporary; Using filesort |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Using filesort<br><code>Using filesort</code>：表示无法利用索引完成的排序操作，也就是<code>ORDER BY</code>的字段没有索引，通常这样的<code>SQL</code>都是需要优化的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT one_id from one  ORDER BY create_time;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra          |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+</span><br><span class="line">|  1 | SIMPLE      | one   | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    3 |      100 | Using filesort |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+</span><br></pre></td></tr></table></figure>
+<p>如果<code>ORDER BY</code>字段有索引就会用到覆盖索引，相比执行速度快很多。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT one_id from one  ORDER BY one_id;</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref  | rows | filtered | Extra       |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br><span class="line">|  1 | SIMPLE      | one   | NULL       | index | NULL          | PRIMARY | 4       | NULL |    3 |      100 | Using index |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+---------+---------+------+------+----------+-------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Using join buffer<br><code>Using join buffer</code>：在我们联表查询的时候，如果表的连接条件没有用到索引，需要有一个连接缓冲区来存储中间结果。<br>先看一下有索引的情况：连接条件<code>one_name</code>、<code>two_name</code>都用到索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT one_name from one o,two t where o.one_name = t.two_name;</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+----------+---------+----------------------+------+----------+--------------------------+</span><br><span class="line">| id | select_type | table | partitions | type  | possible_keys | key      | key_len | ref                  | rows | filtered | Extra                    |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+----------+---------+----------------------+------+----------+--------------------------+</span><br><span class="line">|  1 | SIMPLE      | o     | NULL       | index | idx_name      | idx_name | 768     | NULL                 |    3 |      100 | Using where; Using index |</span><br><span class="line">|  1 | SIMPLE      | t     | NULL       | ref   | idx_name      | idx_name | 768     | xin-slave.o.one_name |    1 |      100 | Using index              |</span><br><span class="line">+----+-------------+-------+------------+-------+---------------+----------+---------+----------------------+------+----------+--------------------------+</span><br></pre></td></tr></table></figure>
+<p>接下来删掉 连接条件<code>one_name</code>、<code>two_name</code>的字段索引。<br>发现<code>Extra</code>列变成<code>Using join buffer</code>，<code>type</code>均为全表扫描，这也是<code>SQL</code>优化中需要注意的地方。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT one_name from one o,two t where o.one_name = t.two_name;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------------------------------------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra                                              |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------------------------------------------+</span><br><span class="line">|  1 | SIMPLE      | t     | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    2 |      100 | NULL                                               |</span><br><span class="line">|  1 | SIMPLE      | o     | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    3 |    33.33 | Using where; Using join buffer (Block Nested Loop) |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------------------------------------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Impossible where<br><code>Impossible where</code>：表示在我们用不太正确的<code>where</code>语句，导致没有符合条件的行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN SELECT one_name from one WHERE 1=2;</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+------------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra            |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+------------------+</span><br><span class="line">|  1 | SIMPLE      | NULL  | NULL       | NULL | NULL          | NULL | NULL    | NULL | NULL | NULL     | Impossible WHERE |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+------------------+</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>No tables used<br><code>No tables used</code>：我们的查询语句中没有<code>FROM</code>子句，或者有<code>FROM DUAL</code>子句。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; EXPLAIN select now();</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+</span><br><span class="line">| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra          |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+</span><br><span class="line">|  1 | SIMPLE      | NULL  | NULL       | NULL | NULL          | NULL | NULL    | NULL | NULL | NULL     | No tables used |</span><br><span class="line">+----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+----------------+</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><code>Extra</code> 列的信息非常非常多，这里就不再一一列举了，详见<code>MySQL</code>官方文档 ：<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#jointype_index_merge">https://dev.mysql.com/doc/ref...</a>   </p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>重点看的几列：</p>
+<ul>
+<li><p><code>possible_keys</code>：可能可以利用的索引的名字。这里的索引名字是创建索引时指定的索引昵称；<br>如果索引没有昵称，则默认显示的是索引中第一个列的名字（在本例中，它是“firstname”）。<br>默认索引名字的含义往往不是很明显。</p>
+</li>
+<li><p><code>key</code>：它显示了<code>MySQL</code>实际使用的索引的名字。如果它为空（或<code>NULL</code>），则<code>MySQL</code>不使用索引。</p>
+</li>
+<li><p><code>key_len</code>：索引中被使用部分的长度，以字节计。</p>
+</li>
+<li><p><code>ref</code>：列出是通过常量（<code>const</code>），还是某个表的某个字段（如果是<code>join</code>）来过滤（通过<code>key</code>）的。</p>
+</li>
+<li><p><code>rows</code>：<code>MySQL</code>所认为的它在找到正确的结果之前必须扫描的记录数。显然，这里最理想的数字就是1。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/explain/" rel="tag"># explain</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/centos7-docker/" rel="prev" title="CentOS7 安装 Docker 和 Docker-compose">
+                  <i class="fa fa-angle-left"></i> CentOS7 安装 Docker 和 Docker-compose
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/centos7-install-mysql57/" rel="next" title="centos7 安装 mysql5.7">
+                  centos7 安装 mysql5.7 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

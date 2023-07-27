@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="cURL可以使用URL的语法模拟浏览器来传输数据因为它是模拟浏览器，因此它同样支持多种协议，FTP, FTPS, HTTP, HTTPS, GOPHER, TELNET, DICT, FILE 以及 LDAP等协议都可以很好的支持，包括一些：HTTPS认证，HTTP POST方法，HTTP PUT方法，FTP上传，keyberos认证，HTTP上传，代理服务器，cookies，用户名&#x2F;密">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP cURL实现发送Get和Post请求">
+<meta property="og:url" content="https://xqmgithub.github.io/curl-request/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="cURL可以使用URL的语法模拟浏览器来传输数据因为它是模拟浏览器，因此它同样支持多种协议，FTP, FTPS, HTTP, HTTPS, GOPHER, TELNET, DICT, FILE 以及 LDAP等协议都可以很好的支持，包括一些：HTTPS认证，HTTP POST方法，HTTP PUT方法，FTP上传，keyberos认证，HTTP上传，代理服务器，cookies，用户名&#x2F;密">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-02-21T09:18:01.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.317Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="cURL">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/curl-request/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/curl-request/","path":"curl-request/","title":"PHP cURL实现发送Get和Post请求"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PHP cURL实现发送Get和Post请求 | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/curl-request/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PHP cURL实现发送Get和Post请求 | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PHP cURL实现发送Get和Post请求
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-02-21 17:18:01" itemprop="dateCreated datePublished" datetime="2017-02-21T17:18:01+08:00">2017-02-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>cURL可以使用URL的语法模拟浏览器来传输数据<br>因为它是模拟浏览器，因此它同样支持多种协议，FTP, FTPS, HTTP, HTTPS, GOPHER, TELNET, DICT, FILE 以及 LDAP等协议都可以很好的支持，包括一些：HTTPS认证，HTTP POST方法，HTTP PUT方法，FTP上传，keyberos认证，HTTP上传，代理服务器，cookies，用户名&#x2F;密码认证，下载文件断点续传，上传文件断点续传，http代理服务器管道，甚至它还支持IPv6，scoket5代理服务器，通过http代理服务器上传文件到FTP服务器等等。</p>
+<span id="more"></span>
+<p>下面是把<strong>post</strong>和<strong>get</strong>请求封装成了一个方法，方便调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">* curl 函数</span><br><span class="line">* @param string $url 请求的地址</span><br><span class="line">* @param string $type POST/GET/post/get</span><br><span class="line">* @param array $data 要传输的数据</span><br><span class="line">* @param string $err_msg 可选的错误信息（引用传递）</span><br><span class="line">* @param int $timeout 超时时间</span><br><span class="line">* @param array $cert_info 证书信息</span><br><span class="line">*/</span><br><span class="line">public function curl_request($url, $type, $data = false, $err_msg = null, $timeout = 20, $cert_info = array())</span><br><span class="line">&#123;</span><br><span class="line">    $type = strtoupper($type);</span><br><span class="line">    if ($type == &#x27;GET&#x27; &amp;&amp; is_array($data)) &#123;</span><br><span class="line">        $data = http_build_query($data);</span><br><span class="line">    &#125;</span><br><span class="line">    $option = array();</span><br><span class="line">    if ( $type == &#x27;POST&#x27; ) &#123;</span><br><span class="line">        $option[CURLOPT_POST] = 1;</span><br><span class="line">    &#125;</span><br><span class="line">    if ($data) &#123;</span><br><span class="line">        if ($type == &#x27;POST&#x27;) &#123;</span><br><span class="line">            $option[CURLOPT_POSTFIELDS] = $data;</span><br><span class="line">        &#125; elseif ($type == &#x27;GET&#x27;) &#123;</span><br><span class="line">            $url = strpos($url, &#x27;?&#x27;) !== false ? $url.&#x27;&amp;&#x27;.$data :  $url.&#x27;?&#x27;.$data;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    $option[CURLOPT_URL]            = $url;</span><br><span class="line">    $option[CURLOPT_FOLLOWLOCATION] = TRUE;</span><br><span class="line">    $option[CURLOPT_MAXREDIRS]      = 4;</span><br><span class="line">    $option[CURLOPT_RETURNTRANSFER] = TRUE;</span><br><span class="line">    $option[CURLOPT_TIMEOUT]        = $timeout;</span><br><span class="line">    //设置证书信息</span><br><span class="line">    if(!empty($cert_info) &amp;&amp; !empty($cert_info[&#x27;cert_file&#x27;])) &#123;</span><br><span class="line">    $option[CURLOPT_SSLCERT]       = $cert_info[&#x27;cert_file&#x27;];</span><br><span class="line">    $option[CURLOPT_SSLCERTPASSWD] = $cert_info[&#x27;cert_pass&#x27;];</span><br><span class="line">    $option[CURLOPT_SSLCERTTYPE]   = $cert_info[&#x27;cert_type&#x27;];</span><br><span class="line">    &#125;</span><br><span class="line">    //设置CA</span><br><span class="line">    if(!empty($cert_info[&#x27;ca_file&#x27;])) &#123;</span><br><span class="line">        // 对认证证书来源的检查，0表示阻止对证书的合法性的检查。1需要设置CURLOPT_CAINFO</span><br><span class="line">        $option[CURLOPT_SSL_VERIFYPEER] = 1;</span><br><span class="line">        $option[CURLOPT_CAINFO] = $cert_info[&#x27;ca_file&#x27;];</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 对认证证书来源的检查，0表示阻止对证书的合法性的检查。1需要设置CURLOPT_CAINFO</span><br><span class="line">        $option[CURLOPT_SSL_VERIFYPEER] = 0;</span><br><span class="line">    &#125;</span><br><span class="line">    //初始化</span><br><span class="line">    $ch = curl_init();</span><br><span class="line">    curl_setopt_array($ch, $option);</span><br><span class="line">    //设置，访问页面的来源地址</span><br><span class="line">    curl_setopt($ch,CURLOPT_REFERER,&quot;http://&quot;.$_SERVER[&#x27;HTTP_HOST&#x27;]);</span><br><span class="line">    //执行并获取结果 </span><br><span class="line">    $response = curl_exec($ch);</span><br><span class="line">    $curl_no  = curl_errno($ch);</span><br><span class="line">    $curl_err = curl_error($ch);</span><br><span class="line">    //释放cURL句柄</span><br><span class="line">    curl_close($ch);</span><br><span class="line">    // error_log</span><br><span class="line">    if($curl_no &gt; 0) &#123;</span><br><span class="line">        if($err_msg !== null) &#123;</span><br><span class="line">            $err_msg = &#x27;(&#x27;.$curl_no.&#x27;)&#x27;.$curl_err;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return $response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cURL/" rel="tag"># cURL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/strpos/" rel="prev" title="php 类似 js indexof与lastindexof 的方法 : strpos() strrpos()">
+                  <i class="fa fa-angle-left"></i> php 类似 js indexof与lastindexof 的方法 : strpos() strrpos()
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/sort/" rel="next" title="php排序之快速排序、冒泡排序">
+                  php排序之快速排序、冒泡排序 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

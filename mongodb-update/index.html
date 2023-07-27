@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="MongoDB 更新文档MongoDB 使用 update() 和 save() 方法来更新集合中的文档。 update() 方法update() 方法用于更新已存在的文档。语法格式如下： 123456789db.collection.update(    &lt;query&gt;,    &lt;update&gt;,    &amp;#123;      upsert: &lt;boolean&amp;gt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB 数据更新操作">
+<meta property="og:url" content="https://xqmgithub.github.io/mongodb-update/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="MongoDB 更新文档MongoDB 使用 update() 和 save() 方法来更新集合中的文档。 update() 方法update() 方法用于更新已存在的文档。语法格式如下： 123456789db.collection.update(    &lt;query&gt;,    &lt;update&gt;,    &amp;#123;      upsert: &lt;boolean&amp;gt">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-24T03:07:37.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.332Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="mongodb">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/mongodb-update/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/mongodb-update/","path":"mongodb-update/","title":"MongoDB 数据更新操作"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MongoDB 数据更新操作 | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#MongoDB-%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3"><span class="nav-number">1.</span> <span class="nav-text">MongoDB 更新文档</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#update-%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">update() 方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">参数说明：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%84%E7%A7%8D%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">3.</span> <span class="nav-text">各种更新操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#set"><span class="nav-number">3.1.</span> <span class="nav-text">$set</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#set-%E4%B8%8E-%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">$set 与 . 操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#unset"><span class="nav-number">3.3.</span> <span class="nav-text">$unset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#inc"><span class="nav-number">3.4.</span> <span class="nav-text">$inc</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#rename"><span class="nav-number">3.5.</span> <span class="nav-text">$rename</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pop"><span class="nav-number">3.6.</span> <span class="nav-text">$pop</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#push"><span class="nav-number">3.7.</span> <span class="nav-text">$push</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#addToSet"><span class="nav-number">3.8.</span> <span class="nav-text">$addToSet</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pull"><span class="nav-number">3.9.</span> <span class="nav-text">$pull</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#findAndModify"><span class="nav-number">3.10.</span> <span class="nav-text">findAndModify()</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/mongodb-update/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MongoDB 数据更新操作 | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB 数据更新操作
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-24 11:07:37" itemprop="dateCreated datePublished" datetime="2020-09-24T11:07:37+08:00">2020-09-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h4 id="MongoDB-更新文档"><a href="#MongoDB-更新文档" class="headerlink" title="MongoDB 更新文档"></a>MongoDB 更新文档</h4><p>MongoDB 使用 <code>update()</code> 和 <code>save()</code> 方法来更新集合中的文档。</p>
+<h5 id="update-方法"><a href="#update-方法" class="headerlink" title="update() 方法"></a><code>update()</code> 方法</h5><p><code>update()</code> 方法用于更新已存在的文档。语法格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">db.collection.update(</span><br><span class="line">    &lt;query&gt;,</span><br><span class="line">    &lt;update&gt;,</span><br><span class="line">    &#123;</span><br><span class="line">      upsert: &lt;boolean&gt;,</span><br><span class="line">      multi: &lt;boolean&gt;,</span><br><span class="line">      writeConcern: &lt;document&gt;</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="参数说明："><a href="#参数说明：" class="headerlink" title="参数说明："></a>参数说明：</h5><ul>
+<li><strong><code>query</code></strong> : update 的查询条件，类似 sql update 查询内 where 后面的。</li>
+<li><strong><code>update</code></strong> : update 的对象和一些更新的操作符（如$,$inc…）等，也可以理解为 sql update 查询内 <code>set</code> 后面的</li>
+<li><strong><code>upsert</code></strong> : 可选，这个参数的意思是，如果不存在 update 的记录，是否插入 <code>objNew</code>,<code>true</code> 为插入，默认是 <code>false</code>，不插入。</li>
+<li><strong><code>multi</code></strong> : 可选，mongodb 默认是 <code>false</code>,只更新找到的第一条记录，如果这个参数为 <code>true</code>,就把按条件查出来多条记录全部更新。</li>
+<li><strong><code>writeConcern</code></strong> :可选，抛出异常的级别。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/update-methods/">官方连接连接地址</a></p>
+<span id="more"></span>
+
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><p>向数据库插入点数据（集合名称为 test)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  _id: 100,</span><br><span class="line">  sku: &quot;abc123&quot;,</span><br><span class="line">  quantity: 200,</span><br><span class="line">  instock: true,</span><br><span class="line">  reorder: false,</span><br><span class="line">  details: &#123; model: &quot;1Q2&quot;, make: &quot;xyz&quot; &#125;,</span><br><span class="line">  tags: [ &quot;apparel&quot;, &quot;clothing&quot; ],</span><br><span class="line">  ratings: [ &#123; by: &quot;ijk&quot;, rating: 1 &#125; ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="各种更新操作符"><a href="#各种更新操作符" class="headerlink" title="各种更新操作符"></a>各种更新操作符</h4><h5 id="set"><a href="#set" class="headerlink" title="$set"></a><code>$set</code></h5><p>用来指定一个键的值。如果这个键不存在，则创建它。<br>示例：更新 quantity 字段、更新 details 的内容以及更新 tags 的值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">db.test.update(</span><br><span class="line">   &#123; _id: 100 &#125;,</span><br><span class="line">   &#123; $set:</span><br><span class="line">      &#123;</span><br><span class="line">        quantity: 500,</span><br><span class="line">        details: &#123; model: &quot;1Q2&quot;, make: &quot;xyz&quot; &#125;,</span><br><span class="line">        tags: [ &quot;coats&quot;, &quot;outerwear&quot;, &quot;clothing&quot; ]</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="set-与-操作"><a href="#set-与-操作" class="headerlink" title="$set 与 . 操作"></a><code>$set</code> 与 <code>.</code> 操作</h5><p>示例：使用 “.” 符号更新数据内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.test.update(</span><br><span class="line">   &#123; _id: 100 &#125;,</span><br><span class="line">   &#123; $set: &#123; &quot;details.make&quot;: &quot;zzz&quot; &#125; &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>同样可以使用 <code>.</code> 符号操作数组内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">db.test.update(</span><br><span class="line">   &#123; _id: 100 &#125;,</span><br><span class="line">   &#123; $set:</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;tags.1&quot;: &quot;rain gear&quot;,</span><br><span class="line">        &quot;ratings.0.rating&quot;: 2</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>创建不存在的 key 值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.tset.update(</span><br><span class="line">   &#123; _id: 100 &#125;,</span><br><span class="line">   &#123; $set:</span><br><span class="line">      &#123; &quot;name&quot;: &quot;not the name&quot; &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="unset"><a href="#unset" class="headerlink" title="$unset"></a><code>$unset</code></h5><p>从文档中移除指定的键。<br>若要完全删除键 “name” ,使用 <code>$unset</code> 即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.test.update(</span><br><span class="line">   &#123; _id: 100 &#125;,</span><br><span class="line">   &#123; $unset:</span><br><span class="line">      &#123; &quot;name&quot;: 1 &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="inc"><a href="#inc" class="headerlink" title="$inc"></a><code>$inc</code></h5><ul>
+<li><p><code>$inc</code> 修改器用来增加已有键的值，或者在键不存在时创建一个键。<code>inc</code> 就是专门来增加（和减少）数字的。</p>
+</li>
+<li><p><code>$inc</code> 只能用于整数、长整数或双精度浮点数。要是用在其他类型的数据上就会导致操作失败。</p>
+</li>
+<li><p><code>$inc</code> 可以接收正数或者负数的值。</p>
+</li>
+</ul>
+<p>示例：将 “quantity” 值减少 1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.test.update(</span><br><span class="line">   &#123; _id: 100 &#125;,</span><br><span class="line">   &#123; $inc :</span><br><span class="line">      &#123; &quot;quantity&quot;: -1 &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="rename"><a href="#rename" class="headerlink" title="$rename"></a><code>$rename</code></h5><p>操作符可以重命名字段名称，新的字段名称不能和文档中现有的字段名相同。</p>
+<p>语法</p>
+<p><code>&#123; $rename: &#123; &lt;old name1&gt;: &lt;new name1&gt;, &lt;old name2&gt;: &lt;new name2&gt;, ... &#125; &#125;</code></p>
+<p>示例：修改 “sku” 为 “skuName”</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.test.update(</span><br><span class="line">   &#123; _id: 100 &#125;,</span><br><span class="line">   &#123; $rename :</span><br><span class="line">      &#123; &quot;sku&quot;: &quot;skuName&quot; &#125;</span><br><span class="line">   &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="pop"><a href="#pop" class="headerlink" title="$pop"></a><code>$pop</code></h5><p>只能用于对 数组（array）进行操作。用于移除数组第一个元素，或者用于移除数组的最后一个元素。<br>语法 -1 表示移除数组第一个元素， 1 表示移除数组最后一个元素</p>
+<p><code>&#123; $pop: &#123; &lt;field&gt;: &lt;-1 | 1&gt;, ... &#125; &#125;</code></p>
+<p>集合数据 <code>&#123; _id: 1, scores: [ 8, 9, 10 ] &#125;</code></p>
+<ul>
+<li><p>移除第一个元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.test.update( &#123; _id: 1 &#125;, &#123; $pop: &#123; scores: -1 &#125; &#125; )</span><br><span class="line"> </span><br><span class="line">// 查询返回</span><br><span class="line">&#123; _id: 1, scores: [ 9, 10 ] &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>移除最后一个元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db.test.update( &#123; _id: 1 &#125;, &#123; $pop: &#123; scores: 1 &#125; &#125; ) </span><br><span class="line">// 查询返回 </span><br><span class="line">&#123; _id: 1, scores: [ 9 ] &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="push"><a href="#push" class="headerlink" title="$push"></a>$push</h5><p>如果指定的键已经存在，会向已有的数组末尾加入一个元素，要是没有就会创建一个新的数组。<br>集合数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;_id&quot; : 1000,</span><br><span class="line">    &quot;details&quot; : &#123;</span><br><span class="line">        &quot;model&quot; : &quot;14Q3&quot;,</span><br><span class="line">        &quot;make&quot; : &quot;zzz&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;tags&quot; : [ </span><br><span class="line">        &quot;coats&quot;, </span><br><span class="line">        &quot;outerwear&quot;, </span><br><span class="line">        &quot;clothing&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;sku&quot; : &quot;abc123&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>向 tags 中增加一个元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.test.update( &#123; _id: 1000&#125;, &#123; $push: &#123;tags: &quot;push&quot;&#125; &#125; ); </span><br><span class="line">// 返回结果 </span><br><span class="line">&#123;...&quot;tags&quot; : [ &quot;coats&quot;, &quot;outerwear&quot;, &quot;clothing&quot;, &quot;push&quot;], ...&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加一个不存在的 key “name”</p>
+</li>
+</ul>
+<p><code>db.getCollection(&#39;test&#39;).update( &#123;_id : 100&#125;, &#123;$push: &#123; name : &quot;sku&quot; &#125; &#125; );</code></p>
+<p><strong>注意：<code>push</code> 只能对数组进行操作。</strong></p>
+<h5 id="addToSet"><a href="#addToSet" class="headerlink" title="$addToSet"></a><code>$addToSet</code></h5><p>向集合数据中添加数组内容，如果数据存在就做追加操作，如果数据不存在就做新增 key 与内容操作。</p>
+<p>语法 </p>
+<p><code>&#123;&quot;$addToSet&quot; : &#123;成员： 内容&#125; &#125;</code></p>
+<ul>
+<li>向数据中的 name 字段追加内容（紧接着前面”$push”操作的数据来）</li>
+</ul>
+<p><code>db.getCollection(&#39;test&#39;).update( &#123;_id : 100&#125;, &#123; $addToSet : &#123; name : &quot;Name&quot; &#125; &#125; );</code></p>
+<ul>
+<li>追加一个不存在的 key item （此时的操作和 <code>$push</code> 类似）</li>
+</ul>
+<p><code>db.getCollection(&#39;test&#39;).update( &#123;_id : 100&#125;, &#123; $addToSet : &#123; item : &quot;Name&quot; &#125; &#125; );</code></p>
+<h5 id="pull"><a href="#pull" class="headerlink" title="$pull"></a><code>$pull</code></h5><p>语法</p>
+<p><code>&#123; $pull: &#123; &lt;field1&gt;: &lt;value|condition&gt;, &lt;field2&gt;: &lt;value|condition&gt;, ... &#125; &#125;</code></p>
+<p> pull操作符移除指定字段值为数组，且匹配pull操作符移除指定字段值为数组，且匹配pull语句声明的查询条件的所有元素。</p>
+<ul>
+<li><p>移除 tags 中的 “push” 与 “coats” 值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">db.test.update(</span><br><span class="line">    &#123; _id : 100 &#125;,</span><br><span class="line">    &#123; $pull: &#123; tags: &#123; $in: [ &quot;push&quot;, &quot;coats&quot; ] &#125; &#125; &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>移除 name 中的 “Name”</p>
+</li>
+</ul>
+<p><code>db.test.update( &#123; _id : 100 &#125;, &#123; $pull: &#123; name : &quot;Name&quot; &#125; &#125; )</code></p>
+<h5 id="findAndModify"><a href="#findAndModify" class="headerlink" title="findAndModify()"></a>findAndModify()</h5><p>语法如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">db.test.findAndModify(&#123;</span><br><span class="line">    query: &lt;document&gt;,</span><br><span class="line">    sort: &lt;document&gt;,</span><br><span class="line">    remove: &lt;boolean&gt;,</span><br><span class="line">    update: &lt;document&gt;,</span><br><span class="line">    new: &lt;boolean&gt;,</span><br><span class="line">    fields: &lt;document&gt;,</span><br><span class="line">    upsert: &lt;boolean&gt;,</span><br><span class="line">    bypassDocumentValidation: &lt;boolean&gt;,</span><br><span class="line">    writeConcern: &lt;document&gt;,</span><br><span class="line">    collation: &lt;document&gt;,</span><br><span class="line">    arrayFilters: [ &lt;filterdocument1&gt;, ... ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>如果我们想对 某个数据进行全部修改，就可以使用 <code>findAndModify()</code> 方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">db.test.findAndModify(&#123;</span><br><span class="line">   query: &#123; _id: 100&#125;,</span><br><span class="line">   update: &#123;</span><br><span class="line">    &quot;details&quot; : &#123;</span><br><span class="line">        &quot;model&quot; : &quot;12Q3&quot;,</span><br><span class="line">        &quot;make&quot; : &quot;zzz&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;tags&quot; : [ </span><br><span class="line">        &quot;coats&quot;, </span><br><span class="line">        &quot;outerwear&quot;, </span><br><span class="line">        &quot;clothing&quot;, </span><br><span class="line">        &quot;push&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;sku&quot; : &quot;abc123&quot;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/operator/update/">官网链接</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mongodb/" rel="tag"># mongodb</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/git-https2ssh/" rel="prev" title="git 远程连接由 https 换成 ssh">
+                  <i class="fa fa-angle-left"></i> git 远程连接由 https 换成 ssh
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

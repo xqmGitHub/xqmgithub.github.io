@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="虽然现在linux有比较多的图形界面系统，但是在功能上还是不如命令行强大，很多需要管理员权限的动作都不能在图形界面下使用.** Vim 是什么？**  Vim 是从 vi 发展出来的一个高效率的文本编辑器，在程序员中被广泛使用，有很多支持程序员们更快更好写代码的强大功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vim 基础使用">
+<meta property="og:url" content="https://xqmgithub.github.io/useVim/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="虽然现在linux有比较多的图形界面系统，但是在功能上还是不如命令行强大，很多需要管理员权限的动作都不能在图形界面下使用.** Vim 是什么？**  Vim 是从 vi 发展出来的一个高效率的文本编辑器，在程序员中被广泛使用，有很多支持程序员们更快更好写代码的强大功能。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-03-03T09:08:12.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.348Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Vim">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/useVim/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/useVim/","path":"useVim/","title":"Vim 基础使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Vim 基础使用 | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">基础使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Vim-%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F%EF%BC%9A%E7%BC%96%E8%BE%91%E6%A8%A1%E5%BC%8F-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">1. Vim 的两种模式：编辑模式&amp;命令模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%B8%B8%E8%A7%81%E7%9A%84%E6%96%87%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">2. 常见的文本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81-%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6%E3%80%81%E4%BF%9D%E5%AD%98%E3%80%81%E5%85%B3%E9%97%AD%E6%96%87%E4%BB%B6-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.1.</span> <span class="nav-text">一、 打开文件、保存、关闭文件(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81-%E6%8F%92%E5%85%A5%E6%96%87%E6%9C%AC%E6%88%96%E8%A1%8C-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8%EF%BC%8C%E6%89%A7%E8%A1%8C%E4%B8%8B%E9%9D%A2%E5%91%BD%E4%BB%A4%E5%90%8E%E5%B0%86%E8%BF%9B%E5%85%A5%E6%8F%92%E5%85%A5%E6%A8%A1%E5%BC%8F%EF%BC%8C%E6%8C%89ESC%E9%94%AE%E5%8F%AF%E9%80%80%E5%87%BA%E6%8F%92%E5%85%A5%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">二、 插入文本或行(vi命令模式下使用，执行下面命令后将进入插入模式，按ESC键可退出插入模式)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81-%E7%A7%BB%E5%8A%A8%E5%85%89%E6%A0%87-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.3.</span> <span class="nav-text">三、  移动光标(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81-%E5%88%A0%E9%99%A4%E3%80%81%E6%81%A2%E5%A4%8D%E5%AD%97%E7%AC%A6%E6%88%96%E8%A1%8C-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.4.</span> <span class="nav-text">四、 删除、恢复字符或行(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81-%E6%90%9C%E7%B4%A2-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.5.</span> <span class="nav-text">五、 搜索(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E3%80%81-%E8%B7%B3%E8%87%B3%E6%8C%87%E5%AE%9A%E8%A1%8C-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.6.</span> <span class="nav-text">六、 跳至指定行(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%83%E3%80%81-%E8%AE%BE%E7%BD%AE%E8%A1%8C%E5%8F%B7-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.7.</span> <span class="nav-text">七、 设置行号(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AB%E3%80%81-%E5%A4%8D%E5%88%B6%E3%80%81%E7%B2%98%E8%B4%B4-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.8.</span> <span class="nav-text">八、 复制、粘贴(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B9%9D%E3%80%81-%E6%9B%BF%E6%8D%A2-vi%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F%E4%B8%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.9.</span> <span class="nav-text">九、 替换(vi命令模式下使用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%81%E3%80%81-%E7%BC%96%E8%BE%91%E5%85%B6%E4%BB%96%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.10.</span> <span class="nav-text">十、 编辑其他文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.2.11.</span> <span class="nav-text">十一、修改文件格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E6%9F%A5%E6%89%BE%E5%B8%AE%E5%8A%A9"><span class="nav-number">1.2.12.</span> <span class="nav-text">十二、查找帮助</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/useVim/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Vim 基础使用 | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vim 基础使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-03-03 17:08:12" itemprop="dateCreated datePublished" datetime="2018-03-03T17:08:12+08:00">2018-03-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>虽然现在linux有比较多的图形界面系统，但是在功能上还是不如命令行强大，很多需要管理员权限的动作都不能在图形界面下使用.<br>** Vim 是什么？**</p>
+<ul>
+<li>Vim 是从 vi 发展出来的一个高效率的文本编辑器，在程序员中被广泛使用，有很多支持程序员们更快更好写代码的强大功能。<span id="more"></span></li>
+</ul>
+<p>** 为什么要学习使用 Vim？**</p>
+<ul>
+<li>作为一个程序员，不管是前端还是后端，工作中基本上都要跟服务器打交道，而现在服务器里面运行的操作系统基本上都是 Linux。</li>
+<li>当你远程跟服务器通信的时候，基本上都要通过终端来跟服务器建立连接。</li>
+<li>当你要修改服务器的某个配置文件的时候，在一个黑漆漆的终端里，你能用的几乎只有 Vim。不会使用 Vim，就没办法工作。</li>
+</ul>
+<p>** 如何学习使用 Vim？**</p>
+<ul>
+<li>学习任何东西都要循序渐进，不要想一口吃成个胖子。现在很多教程上来就列一堆快捷键，基本上看几眼就放弃了。</li>
+<li>刚开始只需要学习一些最基本的操作，后面随着代码写的越来越多，进阶的操作每次练一两个，慢慢也就会了，很简单。</li>
+<li>工具是拿来用的，不要让它成为一个负担！</li>
+</ul>
+<p>** 新手最大的问题**</p>
+<ul>
+<li>大小写看错</li>
+<li>空格写漏</li>
+<li>把多个命令当成一个命令</li>
+</ul>
+<h2 id="基础使用"><a href="#基础使用" class="headerlink" title="基础使用"></a>基础使用</h2><h3 id="1-Vim-的两种模式：编辑模式-命令模式"><a href="#1-Vim-的两种模式：编辑模式-命令模式" class="headerlink" title="1. Vim 的两种模式：编辑模式&amp;命令模式"></a>1. Vim 的两种模式：编辑模式&amp;命令模式</h3><ul>
+<li>输入<code>vim a.md</code> 初始进入编辑器命令模式（注意 <code>vim</code> 和 <code>a.txt</code> 之间有一个空格）</li>
+<li><code>i</code> 进入编辑模式</li>
+<li>键盘左上角 <code>esc</code> 进入命令模式</li>
+<li><code>:wq</code> 保存退出</li>
+<li><code>:q!</code> 不保存强制退出</li>
+</ul>
+<h3 id="2-常见的文本操作"><a href="#2-常见的文本操作" class="headerlink" title="2. 常见的文本操作"></a>2. 常见的文本操作</h3><h4 id="一、-打开文件、保存、关闭文件-vi命令模式下使用"><a href="#一、-打开文件、保存、关闭文件-vi命令模式下使用" class="headerlink" title="一、 打开文件、保存、关闭文件(vi命令模式下使用)"></a>一、 打开文件、保存、关闭文件(vi命令模式下使用)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">:w       //保存文件</span><br><span class="line">:w vpser.net //保存至vpser.net文件</span><br><span class="line">:q          //退出编辑器，如果文件已修改请使用下面的命令</span><br><span class="line">:q!        //退出编辑器，且不保存</span><br><span class="line">:wq         //退出编辑器，且保存文件</span><br></pre></td></tr></table></figure>
+
+<h4 id="二、-插入文本或行-vi命令模式下使用，执行下面命令后将进入插入模式，按ESC键可退出插入模式"><a href="#二、-插入文本或行-vi命令模式下使用，执行下面命令后将进入插入模式，按ESC键可退出插入模式" class="headerlink" title="二、 插入文本或行(vi命令模式下使用，执行下面命令后将进入插入模式，按ESC键可退出插入模式)"></a>二、 插入文本或行(vi命令模式下使用，执行下面命令后将进入插入模式，按ESC键可退出插入模式)</h4><p>一般使用i</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a     //在当前光标位置的右边添加文本</span><br><span class="line">i     //在当前光标位置的左边添加文本</span><br><span class="line">A     //在当前行的末尾位置添加文本</span><br><span class="line">I     //在当前行的开始处添加文本(非空字符的行首)</span><br><span class="line">O     //在当前行的上面新建一行</span><br><span class="line">o     //在当前行的下面新建一行</span><br><span class="line">R     //替换(覆盖)当前光标位置及后面的若干文本</span><br><span class="line">J     //合并光标所在行及下一行为一行(依然在命令模式)</span><br></pre></td></tr></table></figure>
+<h4 id="三、-移动光标-vi命令模式下使用"><a href="#三、-移动光标-vi命令模式下使用" class="headerlink" title="三、  移动光标(vi命令模式下使用)"></a>三、  移动光标(vi命令模式下使用)</h4><p>1、使用上下左右方向键</p>
+<p>2、命令模式下：h   向左、j   向下 、k   向上、l  向右。<br>空格键 向右、Backspace  向左、Enter  移动到下一行首、-  移动到上一行首。</p>
+<h4 id="四、-删除、恢复字符或行-vi命令模式下使用"><a href="#四、-删除、恢复字符或行-vi命令模式下使用" class="headerlink" title="四、 删除、恢复字符或行(vi命令模式下使用)"></a>四、 删除、恢复字符或行(vi命令模式下使用)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x      //删除当前字符</span><br><span class="line">nx     //删除从光标开始的n个字符</span><br><span class="line">dd     //删除当前行</span><br><span class="line">ndd    //向下删除当前行在内的n行</span><br><span class="line">u      //撤销上一步操作</span><br><span class="line">U      //撤销对当前行的所有操作</span><br></pre></td></tr></table></figure>
+<h4 id="五、-搜索-vi命令模式下使用"><a href="#五、-搜索-vi命令模式下使用" class="headerlink" title="五、 搜索(vi命令模式下使用)"></a>五、 搜索(vi命令模式下使用)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/vpser    //向光标下搜索vpser字符串，vpser可以是正则表达式</span><br><span class="line">?vpser    //向光标上搜索vpser字符串</span><br><span class="line">n         //向下搜索前一个搜素动作</span><br><span class="line">N         //向上搜索前一个搜索动作</span><br><span class="line">*(#)      //当光标停留在某个单词上时, 输入这条命令表示查找与该单词匹配的下(上)一个单词. 同样, 再输入 n 查找下一个匹配处, 输入 N 反方向查找.</span><br><span class="line"></span><br><span class="line">g*(g#)    //此命令与上条命令相似, 只不过它不完全匹配光标所在处的单词, 而是匹配包含该单词的所有字符串.</span><br></pre></td></tr></table></figure>
+<h4 id="六、-跳至指定行-vi命令模式下使用"><a href="#六、-跳至指定行-vi命令模式下使用" class="headerlink" title="六、 跳至指定行(vi命令模式下使用)"></a>六、 跳至指定行(vi命令模式下使用)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">n+        //向下跳n行</span><br><span class="line">n-        //向上跳n行</span><br><span class="line">nG        //跳到行号为n的行</span><br><span class="line">G         //跳至文件的底部</span><br></pre></td></tr></table></figure>
+<h4 id="七、-设置行号-vi命令模式下使用"><a href="#七、-设置行号-vi命令模式下使用" class="headerlink" title="七、 设置行号(vi命令模式下使用)"></a>七、 设置行号(vi命令模式下使用)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:set  nu     //显示行号</span><br><span class="line">:set nonu    //取消显示行号</span><br></pre></td></tr></table></figure>
+<h4 id="八、-复制、粘贴-vi命令模式下使用"><a href="#八、-复制、粘贴-vi命令模式下使用" class="headerlink" title="八、 复制、粘贴(vi命令模式下使用)"></a>八、 复制、粘贴(vi命令模式下使用)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">yy    //将当前行复制到缓存区，也可以用 &quot;ayy 复制，&quot;a 为缓冲区，a也可以替换为a到z的任意字母，可以完成多个复制任务。</span><br><span class="line">nyy   //将当前行向下n行复制到缓冲区，也可以用 &quot;anyy 复制，&quot;a 为缓冲区，a也可以替换为a到z的任意字母，可以完成多个复制任务。</span><br><span class="line">yw    //复制从光标开始到词尾的字符。</span><br><span class="line">nyw   //复制从光标开始的n个单词。</span><br><span class="line">y^    //复制从光标到行首的内容。  [VPS侦探](http://www.vpser.net/)</span><br><span class="line">y$    //复制从光标到行尾的内容。</span><br><span class="line">p     //粘贴剪切板里的内容在光标后，如果使用了前面的自定义缓冲区，建议使用&quot;ap 进行粘贴。</span><br><span class="line">P     //粘贴剪切板里的内容在光标前，如果使用了前面的自定义缓冲区，建议使用&quot;aP 进行粘贴。</span><br></pre></td></tr></table></figure>
+<h4 id="九、-替换-vi命令模式下使用"><a href="#九、-替换-vi命令模式下使用" class="headerlink" title="九、 替换(vi命令模式下使用)"></a>九、 替换(vi命令模式下使用)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">:s/old/new           //用new替换行中首次出现的old</span><br><span class="line">:s/old/new/g         //用new替换行中所有的old</span><br><span class="line">:n,m s/old/new/g     //用new替换从n到m行里所有的old</span><br><span class="line">:%s/old/new/g        //用new替换当前文件里所有的old</span><br></pre></td></tr></table></figure>
+<h4 id="十、-编辑其他文件"><a href="#十、-编辑其他文件" class="headerlink" title="十、 编辑其他文件"></a>十、 编辑其他文件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:e otherfilename    //编辑文件名为otherfilename的文件。</span><br></pre></td></tr></table></figure>
+<h4 id="十一、修改文件格式"><a href="#十一、修改文件格式" class="headerlink" title="十一、修改文件格式"></a>十一、修改文件格式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:set fileformat=unix   //将文件修改为unix格式，如win下面的文本文件在linux下会出现^M。</span><br></pre></td></tr></table></figure>
+<h4 id="十二、查找帮助"><a href="#十二、查找帮助" class="headerlink" title="十二、查找帮助"></a>十二、查找帮助</h4><p>当你不知道怎么处理时，直接输入help可以看到帮助文档的起点，ZZ是退出或者：q，不建议使用查找关于某个字母的命令 ：help x   查找关于x的命令。</p>
+<hr>
+<table>
+<thead>
+<tr>
+<th>按键</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>h或←</td>
+<td>光标左移</td>
+</tr>
+<tr>
+<td>l或→</td>
+<td>光标右移</td>
+</tr>
+<tr>
+<td>k或↑</td>
+<td>光标上移</td>
+</tr>
+<tr>
+<td>j或↓</td>
+<td>光标下移</td>
+</tr>
+<tr>
+<td>gg</td>
+<td>快速定位到文本开头</td>
+</tr>
+<tr>
+<td>G（shift+g）</td>
+<td>快速定位到文本最后一段</td>
+</tr>
+<tr>
+<td>0或home</td>
+<td>快速定位到当前段首</td>
+</tr>
+<tr>
+<td>$或end</td>
+<td>快速定位到当前段首</td>
+</tr>
+<tr>
+<td>Ctrl+f</td>
+<td>向下翻一页</td>
+</tr>
+<tr>
+<td>Ctrl+b</td>
+<td>向上翻一页</td>
+</tr>
+<tr>
+<td>Ctrl+d</td>
+<td>向下翻半页</td>
+</tr>
+<tr>
+<td>Ctrl+u</td>
+<td>向上翻一页</td>
+</tr>
+<tr>
+<td>&#x2F;string</td>
+<td>查找文本中光标位置下方的string字符串，如要查找kabc则直接输入&#x2F;kabc即可</td>
+</tr>
+<tr>
+<td>?string</td>
+<td>查找文本中光标位置上方的string字符串，如要查找kabc则直接输入?kabc即可</td>
+</tr>
+<tr>
+<td>yy</td>
+<td>复制光标所在的段落</td>
+</tr>
+<tr>
+<td>y0</td>
+<td>复制光标位置到段首的所有字符</td>
+</tr>
+<tr>
+<td>y$</td>
+<td>复制光标位置到段尾的所有字符</td>
+</tr>
+<tr>
+<td>nyy</td>
+<td>从光标位置向下复制n段，包含光标所在的段落</td>
+</tr>
+<tr>
+<td>ygg</td>
+<td>复制光标位置所在段落到文本开头的所有内容</td>
+</tr>
+<tr>
+<td>yG</td>
+<td>复制光标位置所在段落到文本结尾的所有内容</td>
+</tr>
+<tr>
+<td>p</td>
+<td>将复制的内容粘贴为光标所在段落的下一段</td>
+</tr>
+<tr>
+<td>P</td>
+<td>将复制的内容粘贴为光标所在段落的上一段</td>
+</tr>
+<tr>
+<td>dd</td>
+<td>删除光标所在的段落</td>
+</tr>
+<tr>
+<td>d0</td>
+<td>删除光标位置到段首的所有字符</td>
+</tr>
+<tr>
+<td>d$</td>
+<td>删除光标位置到段尾的所有字符</td>
+</tr>
+<tr>
+<td>dgg</td>
+<td>删除光标位置所在段落到文本开头的所有内容</td>
+</tr>
+<tr>
+<td>dG</td>
+<td>删除光标位置所在段落到文本结尾的所有内容</td>
+</tr>
+<tr>
+<td>ndd</td>
+<td>从光标位置向下删除n段，包含光标所在的段落</td>
+</tr>
+<tr>
+<td>u</td>
+<td>撤销上一个操作</td>
+</tr>
+<tr>
+<td>Ctrl+r</td>
+<td>重复上一个操作</td>
+</tr>
+<tr>
+<td>:w</td>
+<td>保存数据</td>
+</tr>
+<tr>
+<td>:w!</td>
+<td>保存时强制写入数据，不管文件是否为只读文件</td>
+</tr>
+<tr>
+<td>)</td>
+<td>移至下一个句子（sentence）首 （sentence 是以 . ! ? 为区格）</td>
+</tr>
+<tr>
+<td>(</td>
+<td>移至上一个句子（sentence）首</td>
+</tr>
+<tr>
+<td>}</td>
+<td>移至下一个段落（paragraph）首 （paragraph 是以空白行为区格）</td>
+</tr>
+<tr>
+<td>{</td>
+<td>移至上一个段落（paragraph）首</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Vim/" rel="tag"># Vim</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/winNginx/" rel="prev" title="Windows下启动、关闭Nginx命令">
+                  <i class="fa fa-angle-left"></i> Windows下启动、关闭Nginx命令
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/hexo-mutil-sync/" rel="next" title="多终端编辑hexo博客">
+                  多终端编辑hexo博客 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

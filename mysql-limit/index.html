@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="分页查询时，我们会在 LIMIT 后面传两个参数，一个是偏移量（offset），一个是获取的条数（limit）。当偏移量很小时，查询速度很快，但是当 offset 很大时，查询速度就会变慢。 MySQL Limit 语法格式： 1SELECT * FROM table LIMIT [offset,] rows | rows OFFSET offset  假设有一张 300w 条数据的表，对其进行分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="limit分页查询性能问题">
+<meta property="og:url" content="https://xqmgithub.github.io/mysql-limit/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="分页查询时，我们会在 LIMIT 后面传两个参数，一个是偏移量（offset），一个是获取的条数（limit）。当偏移量很小时，查询速度很快，但是当 offset 很大时，查询速度就会变慢。 MySQL Limit 语法格式： 1SELECT * FROM table LIMIT [offset,] rows | rows OFFSET offset  假设有一张 300w 条数据的表，对其进行分">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-04T06:48:54.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.332Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="limit">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/mysql-limit/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/mysql-limit/","path":"mysql-limit/","title":"limit分页查询性能问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>limit分页查询性能问题 | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%90%E6%9F%A5%E8%AF%A2%E5%88%86%E9%A1%B5%E6%96%B9%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">子查询分页方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#join-%E5%88%86%E9%A1%B5%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">join 分页方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95%EF%BC%88Cover-Index%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">覆盖索引（Cover Index）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/mysql-limit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="limit分页查询性能问题 | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          limit分页查询性能问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-04 14:48:54" itemprop="dateCreated datePublished" datetime="2020-01-04T14:48:54+08:00">2020-01-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySql/" itemprop="url" rel="index"><span itemprop="name">MySql</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>分页查询时，我们会在 <code>LIMIT</code> 后面传两个参数，一个是偏移量（<code>offset</code>），一个是获取的条数（<code>limit</code>）。当偏移量很小时，查询速度很快，但是当 <code>offset</code> 很大时，查询速度就会变慢。</p>
+<p>MySQL Limit 语法格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table LIMIT [offset,] rows | rows OFFSET offset</span><br></pre></td></tr></table></figure>
+
+<p>假设有一张 300w 条数据的表，对其进行分页查询。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select * from tbl limit 1, 10		// 31.6ms</span><br><span class="line">select * from tbl limit 10, 10		// 34.9ms</span><br><span class="line">select * from tbl limit 100, 10		// 35.6ms</span><br><span class="line">select * from tbl limit 1000, 10	// 38.3ms</span><br><span class="line">select * from tbl limit 10000, 10	// 5561ms</span><br><span class="line">select * from tbl limit 100000, 10	// 60.6s</span><br><span class="line">select * from tbl limit 1000000, 10	// 272.3s</span><br></pre></td></tr></table></figure>
+
+<p>LIMIT分页查询的时间与偏移量值成正比。当偏移量越大时，查询时间越长。这种情况，会随着业务的增加，数据的增多，会越发的明显。那么，如何优化这种情况呢？答案是，覆盖索引。</p>
+<span id="more"></span>
+
+<p><strong>优化思路</strong></p>
+<p>对于LIMIT分页查询的性能优化，主要思路是利用覆盖索引字段定位数据，然后再取出内容。</p>
+<ul>
+<li><h4 id="子查询分页方式"><a href="#子查询分页方式" class="headerlink" title="子查询分页方式"></a>子查询分页方式</h4></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tbl</span><br><span class="line">WHERE id &gt;= (SELECT id FROM tbl limit 100000, 1)</span><br><span class="line">LIMIT 20  // 55ms</span><br></pre></td></tr></table></figure>
+
+<p>子查询分页方式，首先通过子查询和覆盖索引定位到起始位置ID，然后再取所需条数的数据。</p>
+<p>缺点是，不适用于结果集不以ID连续自增的分页场景。在复杂分页场景，往往需要通过过滤条件，筛选到符合条件的ID，此时的ID是离散且不连续的。如果使用上述的方式，并不能筛选出目标数据。</p>
+<p><strong>改造版</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT t1.* FROM tbl t1</span><br><span class="line">WHERE t1.id in (SELECT t2.id from (SELECT id FROM tbl limit 100000, 10) as t2)  // 53.8ms</span><br></pre></td></tr></table></figure>
+
+<p>查询效率很高。但是，这种写法比较繁琐。我们可以使用下面的  <code>join</code>  分页方式，达到相同的优化效果。实际上，两者的原理是相同的。</p>
+<ul>
+<li><h4 id="join-分页方式"><a href="#join-分页方式" class="headerlink" title="join 分页方式"></a>join 分页方式</h4></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tbl t1 </span><br><span class="line">JOIN (SELECT id from tbl WHERE status=1 </span><br><span class="line">limit 100000, 10) t2</span><br><span class="line">ON t1.id = t2.id  // 53.3 ms</span><br></pre></td></tr></table></figure>
+
+<p>这条SQL是，通过自连接与<code>join</code>定位到目标 <code>ids</code>，然后再将数据取出。在定位目标 <code>ids</code>时，由于 <code>SELECT</code>的元素只有主键 <code>ID</code>，且<code>status</code> 存在索引，因此MySQL只需在索引中，就能定位到目标 <code>ids</code>，不用在数据文件上进行查找。因而，查询效率非常高。</p>
+<h4 id="覆盖索引（Cover-Index）"><a href="#覆盖索引（Cover-Index）" class="headerlink" title="覆盖索引（Cover Index）"></a>覆盖索引（Cover Index）</h4><blockquote>
+<p>如果索引包含所有满足查询需要的数据的索引成为覆盖索引(Covering Index)，也就是平时所说的不需要回表操作。</p>
+</blockquote>
+<p>简单的说，覆盖索引覆盖所有需要查询的字段（大于或等于所查询的字段）。MySQL可以通过索引获取查询数据，因而不需要读取数据行。</p>
+<p><strong>覆盖索引的好处：</strong></p>
+<ul>
+<li>索引大小远小于数据行大小。因而，如果只读取索引，则能极大减少对数据访问量。</li>
+<li>索引按顺序储存。对于IO密集型的范围查询会比随机从磁盘读取每一行数据的IO要少。</li>
+<li>避免对主键索引的二次查询。二级索引的叶子节点包含了主键的值，如果二级索引包含所要查询的值，则能避免二次查询主键索引（聚簇索引，聚簇索引既存储了索引，也储存了值）。</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>通过利用覆盖索引，能极大的优化了Limit分页查询的效率。在真正的实践中，除了使用覆盖索引，优化查询速度外，我们还可以使用 Redis 缓存，将热点数据进行缓存储存。</p>
+<p>也可以根据应用场景来选择限制分页，即在不影响阅读体验的前提下，只允许用户可以查看前几千条的数据。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/limit/" rel="tag"># limit</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/phpstorm-php-lang-level/" rel="prev" title="修改 PhpStorm 的默认 PHP 版本语法为 7.0+">
+                  <i class="fa fa-angle-left"></i> 修改 PhpStorm 的默认 PHP 版本语法为 7.0+
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/centos7-docker/" rel="next" title="CentOS7 安装 Docker 和 Docker-compose">
+                  CentOS7 安装 Docker 和 Docker-compose <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

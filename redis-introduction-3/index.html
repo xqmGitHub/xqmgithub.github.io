@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="集合 set、有序集合sort set">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 入门 - 3（集合 set、有序集合 sort set）">
+<meta property="og:url" content="https://xqmgithub.github.io/redis-introduction-3/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="集合 set、有序集合sort set">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://p5tq1m3a9.bkt.clouddn.com/hexo_blog/static/redis3.jpg">
+<meta property="article:published_time" content="2018-11-06T08:15:19.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.348Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="set">
+<meta property="article:tag" content="sort set">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://p5tq1m3a9.bkt.clouddn.com/hexo_blog/static/redis3.jpg">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/redis-introduction-3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/redis-introduction-3/","path":"redis-introduction-3/","title":"Redis 入门 - 3（集合 set、有序集合 sort set）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 入门 - 3（集合 set、有序集合 sort set） | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%EF%BC%88Set%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">集合（Set）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0"><span class="nav-number">1.1.</span> <span class="nav-text">增加</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4"><span class="nav-number">1.2.</span> <span class="nav-text">删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%85%A8%E9%83%A8"><span class="nav-number">1.3.</span> <span class="nav-text">获取全部</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">1.4.</span> <span class="nav-text">判断是否存在</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E8%BF%90%E7%AE%97"><span class="nav-number">2.</span> <span class="nav-text">集合运算</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%BB%E5%90%8C"><span class="nav-number">2.1.</span> <span class="nav-text">去同</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E9%9B%86"><span class="nav-number">2.2.</span> <span class="nav-text">交集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E9%9B%86"><span class="nav-number">2.3.</span> <span class="nav-text">并集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0%E4%B8%AA%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">获取元素个数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E8%BF%90%E7%AE%97%E5%B9%B6%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">集合运算并存储结果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%BB%E5%90%8C-1"><span class="nav-number">3.1.</span> <span class="nav-text">去同</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E9%9B%86-1"><span class="nav-number">3.2.</span> <span class="nav-text">交集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E9%9B%86-1"><span class="nav-number">3.3.</span> <span class="nav-text">并集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0"><span class="nav-number">3.4.</span> <span class="nav-text">随机获取元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%B9%E5%87%BA%E4%B8%80%E4%B8%AA%E5%85%83%E7%B4%A0"><span class="nav-number">3.5.</span> <span class="nav-text">弹出一个元素</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%EF%BC%88Sort-set%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">有序集合（Sort set）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E5%85%83%E7%B4%A0"><span class="nav-number">4.1.</span> <span class="nav-text">增加元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E4%B8%80%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E5%85%83%E7%B4%A0"><span class="nav-number">4.2.</span> <span class="nav-text">删除一个或多个元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E5%85%83%E7%B4%A0%E7%9A%84%E5%88%86%E6%95%B0"><span class="nav-number">4.3.</span> <span class="nav-text">获得元素的分数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E6%8E%92%E5%90%8D%E5%9C%A8%E6%9F%90%E4%B8%AA%E8%8C%83%E5%9B%B4%E7%9A%84%E5%85%83%E7%B4%A0%E5%88%97%E8%A1%A8"><span class="nav-number">4.4.</span> <span class="nav-text">获得排名在某个范围的元素列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E6%8C%87%E5%AE%9A%E5%88%86%E6%95%B0%E8%8C%83%E5%9B%B4%E7%9A%84%E5%85%83%E7%B4%A0"><span class="nav-number">4.5.</span> <span class="nav-text">获得指定分数范围的元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E6%95%B4%E6%9F%90%E4%B8%AA%E5%85%83%E7%B4%A0%E7%9A%84%E5%88%86%E6%95%B0"><span class="nav-number">4.6.</span> <span class="nav-text">调整某个元素的分数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%9B%86%E5%90%88%E4%B8%AD%E5%85%83%E7%B4%A0%E7%9A%84%E6%95%B0%E9%87%8F"><span class="nav-number">4.7.</span> <span class="nav-text">获取集合中元素的数量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E6%8C%87%E5%AE%9A%E5%88%86%E6%95%B0%E8%8C%83%E5%9B%B4%E5%86%85%E7%9A%84%E5%85%83%E7%B4%A0%E4%B8%AA%E6%95%B0"><span class="nav-number">4.8.</span> <span class="nav-text">获得指定分数范围内的元素个数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E7%85%A7%E6%8E%92%E5%90%8D%E8%8C%83%E5%9B%B4%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0"><span class="nav-number">4.9.</span> <span class="nav-text">按照排名范围删除元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E7%85%A7%E5%88%86%E6%95%B0%E8%8C%83%E5%9B%B4%E5%88%A0%E9%99%A4%E5%85%83%E7%B4%A0"><span class="nav-number">4.10.</span> <span class="nav-text">按照分数范围删除元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0%E7%9A%84%E6%8E%92%E5%90%8D"><span class="nav-number">4.11.</span> <span class="nav-text">获取元素的排名</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/redis-introduction-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 入门 - 3（集合 set、有序集合 sort set） | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 入门 - 3（集合 set、有序集合 sort set）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-06 16:15:19" itemprop="dateCreated datePublished" datetime="2018-11-06T16:15:19+08:00">2018-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Redis/" itemprop="url" rel="index"><span itemprop="name">Redis</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>集合 set、有序集合sort set</p>
+<span id="more"></span>
+<h3 id="集合（Set）"><a href="#集合（Set）" class="headerlink" title="集合（Set）"></a>集合（Set）</h3><blockquote>
+<p>集合，是一组无序且唯一的数据集。<br>在实际应用中，可以应用于“标签”、“属性”，这类需经常扩展或组合查询的场景</p>
+</blockquote>
+<ul>
+<li><h4 id="增加"><a href="#增加" class="headerlink" title="增加"></a>增加</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果元素已存在，则忽略该命令（该命令具有批量功能）。返回成功加入的元素数量</span></span><br><span class="line">SADD key_name member [other members]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除元素（该命令具有批量功能）。返回删除成功的个数</span></span><br><span class="line">SREM key_name member [other members]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获取全部"><a href="#获取全部" class="headerlink" title="获取全部"></a>获取全部</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回集合下的所有元素</span></span><br><span class="line">SMEMBERS key_name</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="判断是否存在"><a href="#判断是否存在" class="headerlink" title="判断是否存在"></a>判断是否存在</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 存在返回 1，不存在返回 0</span></span><br><span class="line">SISMEMBER key_name member</span><br></pre></td></tr></table></figure>
+
+<h3 id="集合运算"><a href="#集合运算" class="headerlink" title="集合运算"></a>集合运算</h3><ul>
+<li><h4 id="去同"><a href="#去同" class="headerlink" title="去同"></a>去同</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回 key_name1 中剔除 key_name2 中相同元素的部分</span></span><br><span class="line">SDIFF key_name1 key_name2 [其他 keys]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="交集"><a href="#交集" class="headerlink" title="交集"></a>交集</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回 key_name1 和 key_name2 的交集</span></span><br><span class="line">SINTER key_name1 key_name2 [其他 keys]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="并集"><a href="#并集" class="headerlink" title="并集"></a>并集</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回 key_name1 和 key_name2 的并集</span></span><br><span class="line">SUNION key_name1 key_name2 [其他 keys]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获取元素个数"><a href="#获取元素个数" class="headerlink" title="获取元素个数"></a>获取元素个数</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回元素个数</span></span><br><span class="line">SCARD key_name</span><br></pre></td></tr></table></figure>
+
+<h3 id="集合运算并存储结果"><a href="#集合运算并存储结果" class="headerlink" title="集合运算并存储结果"></a>集合运算并存储结果</h3><ul>
+<li><h4 id="去同-1"><a href="#去同-1" class="headerlink" title="去同"></a>去同</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 结果存储在 destination 键中，可用于多步集合运算</span></span><br><span class="line">SDIFFSTORE destination key_name [key_names...]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="交集-1"><a href="#交集-1" class="headerlink" title="交集"></a>交集</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SINTERSTORE destination key_name [key_names...]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="并集-1"><a href="#并集-1" class="headerlink" title="并集"></a>并集</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUNIONSTORE destination key_name [key_names ...]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="随机获取元素"><a href="#随机获取元素" class="headerlink" title="随机获取元素"></a>随机获取元素</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 无 count 时，随机获取一个元素</span></span><br><span class="line"><span class="comment">// count &gt; 0 时，随机获取 count 个不重复的元素，如果 count 大于集合元素数时，返回全部</span></span><br><span class="line"><span class="comment">// count &lt; 0 时，随机获取 |count| 个元素（可能重复）</span></span><br><span class="line">SRANDMEMBER key_name [count]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="弹出一个元素"><a href="#弹出一个元素" class="headerlink" title="弹出一个元素"></a>弹出一个元素</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 随机选择一个元素弹出</span></span><br><span class="line">SPOP key_name</span><br></pre></td></tr></table></figure>
+
+<h3 id="有序集合（Sort-set）"><a href="#有序集合（Sort-set）" class="headerlink" title="有序集合（Sort set）"></a>有序集合（Sort set）</h3><blockquote>
+<p>有序集合，同集合一致，但为每个元素关联了一个分数，使我们能够获得分数最高或最低的前 N 个元素，当然也可按范围获取元素<br>但有序集合更加消耗内存，读取任意位置的数据都会很快，更加便捷的排序调整</p>
+</blockquote>
+<ul>
+<li><h4 id="增加元素"><a href="#增加元素" class="headerlink" title="增加元素"></a>增加元素</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回新加入集合的元素个数</span></span><br><span class="line"><span class="comment">// score 可以为 integer 或 float，也可为 -inf（负无穷）或 +inf（正无穷）</span></span><br><span class="line">ZADD key_name score member [other scores members]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 更新，将原 member 的 score 调整为 new_score</span></span><br><span class="line">ZADD key_name new_score member</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="删除一个或多个元素"><a href="#删除一个或多个元素" class="headerlink" title="删除一个或多个元素"></a>删除一个或多个元素</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回成功删除的元素个数</span></span><br><span class="line">ZREM key_name memeber [other members]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获得元素的分数"><a href="#获得元素的分数" class="headerlink" title="获得元素的分数"></a>获得元素的分数</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回分数</span></span><br><span class="line">ZSCORE kye_name member</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获得排名在某个范围的元素列表"><a href="#获得排名在某个范围的元素列表" class="headerlink" title="获得排名在某个范围的元素列表"></a>获得排名在某个范围的元素列表</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 首先按照分数从小到大排序</span></span><br><span class="line"><span class="comment">// （如果元素的分数相同，则对 member 按照字典顺序排列 “0”&lt;...“9”&lt;“A”&lt;...“Z”&lt;“a”...&lt;“z”）</span></span><br><span class="line"><span class="comment">// 再根据索引（0 开始）结合 start 和 end 的要求返回元素</span></span><br><span class="line"><span class="comment">// 当加上 WITHSCORE 时，同时返回分数 </span></span><br><span class="line">ZRANGE key_name start end [WITHSCORE]</span><br><span class="line"></span><br><span class="line"><span class="comment">// 按照分数从大到小，其他同 ZRANGE</span></span><br><span class="line">ZREVRANGE key_name start end [WITHSCORE]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获得指定分数范围的元素"><a href="#获得指定分数范围的元素" class="headerlink" title="获得指定分数范围的元素"></a>获得指定分数范围的元素</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 首先会对 key_name 按从小到大排列</span></span><br><span class="line"><span class="comment">// 返回分数在 min 和 max 之间的元素（注意：包含 min 和 max）</span></span><br><span class="line">ZRANGEBYSCORE key_name min max [WITHSCORE] [LIMIT offset count]</span><br><span class="line"></span><br><span class="line"><span class="comment">// LIMIT 可在检索的结果中，偏移（往后数）offset 个位置，取 count 个元素</span></span><br><span class="line"><span class="comment">// 在 students 集合中获取分数为 70 ~ 100 分之间，并跳过前 2 个，取 3 个元素</span></span><br><span class="line">ZRANGEBYSCORE students <span class="number">70</span> <span class="number">100</span> WITHSCORE LIMIT <span class="number">2</span> <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不希望包含 min 或 max 时，使用“(”（同数学中的集合符号，( 不包含，[ 包含）</span></span><br><span class="line">ZRANGEBYSCORE key_name <span class="number">80</span> (<span class="number">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 按从大到小排列，其他一致</span></span><br><span class="line">ZREVRANGEBYSCORE key_name min max [WITHSCORE] [LIMIT offset count]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="调整某个元素的分数"><a href="#调整某个元素的分数" class="headerlink" title="调整某个元素的分数"></a>调整某个元素的分数</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 给元素增加 increment 的分值，返回更改后的分数</span></span><br><span class="line"><span class="comment">// increment 可以为正（加），也可以为负（减）</span></span><br><span class="line"><span class="comment">// 如果指定元素不存在，则先创建，初始化为 0，再调整</span></span><br><span class="line">ZINCRBY key_name increment member</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获取集合中元素的数量"><a href="#获取集合中元素的数量" class="headerlink" title="获取集合中元素的数量"></a>获取集合中元素的数量</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回个数</span></span><br><span class="line">ZCARD key_name</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获得指定分数范围内的元素个数"><a href="#获得指定分数范围内的元素个数" class="headerlink" title="获得指定分数范围内的元素个数"></a>获得指定分数范围内的元素个数</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 同 ZRANGEBYSOCRE 中的 min 和 max 一致</span></span><br><span class="line"><span class="comment">// 包含 min 和 max，不包含的话，可以使用“(”</span></span><br><span class="line">ZCOUNT key_name min max</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="按照排名范围删除元素"><a href="#按照排名范围删除元素" class="headerlink" title="按照排名范围删除元素"></a>按照排名范围删除元素</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 先从小到大排列，再根据索引位置，删除 start 和 end 间的所有元素（注意：包含 start 和 end）</span></span><br><span class="line"><span class="comment">// 返回删除元素个数</span></span><br><span class="line">ZREMRANGEBYRANK key_name start end</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="按照分数范围删除元素"><a href="#按照分数范围删除元素" class="headerlink" title="按照分数范围删除元素"></a>按照分数范围删除元素</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除分数范围内的所有元素</span></span><br><span class="line">ZREMRANGEBYSCORE key_name min max</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><h4 id="获取元素的排名"><a href="#获取元素的排名" class="headerlink" title="获取元素的排名"></a>获取元素的排名</h4></li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从小到大排列，返回索引值（0 开始）</span></span><br><span class="line">ZRANK key_name member</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从大到小排列，返回索引值（0 开始）</span></span><br><span class="line">ZREVRANK key_name member</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src="http://p5tq1m3a9.bkt.clouddn.com/hexo_blog/static/redis3.jpg" alt="总结"></p>
+<p><a target="_blank" rel="noopener" href="https://laravel-china.org/articles/8103/redis-introduction-1-basic-key-operation">转</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+              <a href="/tags/set/" rel="tag"># set</a>
+              <a href="/tags/sort-set/" rel="tag"># sort set</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/redis-introduction-2/" rel="prev" title="Redis 入门 - 2（散列 + 列表）">
+                  <i class="fa fa-angle-left"></i> Redis 入门 - 2（散列 + 列表）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/css-change-color/" rel="next" title="利用CSS改变图片颜色的100种方法！">
+                  利用CSS改变图片颜色的100种方法！ <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>

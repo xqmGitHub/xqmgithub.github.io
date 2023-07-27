@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xqmgithub.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.17.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":null}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="我们在工作中常常遇到需要用ajax来显示下一页和上一页，ajax无刷新页面，因此，假如你想通过浏览器的历史记录返回上一页和下一页。那这就问题来了！一般需求要历史返回的时候，我们通常不使用ajax。但是呢，假如一个页面中，只有一个地方是动态的，其他地方都是固定的，除了使用模板之外，那么就是使用ajax来操作显得格外方便！那么如何解决ajax历史记录的返回和前进呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ajax无刷新页面切换,历史记录后退前进解决方案">
+<meta property="og:url" content="https://xqmgithub.github.io/ajaxHistory/index.html">
+<meta property="og:site_name" content="点点滴滴">
+<meta property="og:description" content="我们在工作中常常遇到需要用ajax来显示下一页和上一页，ajax无刷新页面，因此，假如你想通过浏览器的历史记录返回上一页和下一页。那这就问题来了！一般需求要历史返回的时候，我们通常不使用ajax。但是呢，假如一个页面中，只有一个地方是动态的，其他地方都是固定的，除了使用模板之外，那么就是使用ajax来操作显得格外方便！那么如何解决ajax历史记录的返回和前进呢？">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-02-26T06:10:31.000Z">
+<meta property="article:modified_time" content="2023-07-18T08:36:09.317Z">
+<meta property="article:author" content="Xiong">
+<meta property="article:tag" content="Ajax">
+<meta property="article:tag" content="历史记录">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://xqmgithub.github.io/ajaxHistory/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://xqmgithub.github.io/ajaxHistory/","path":"ajaxHistory/","title":"ajax无刷新页面切换,历史记录后退前进解决方案"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ajax无刷新页面切换,历史记录后退前进解决方案 | 点点滴滴</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">点点滴滴</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>留言</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+<div id="loading-wrap">
+    <div id="loading">
+        <p><font color="gray">正在载入，请稍候.......</font></p>
+        <p> 
+            <input type="text" id="chart" size="46" readonly style="font-family:Arial; font-weight:bolder; color:gray; background-color:white; padding:0px; border-style:none;">
+            <br>
+            <input type="text" id="percent" size="46" readonly style="font-family:Arial; color:gray; text-align:center; border-width:medium; border-style:none;">
+        </p>
+    </div>
+</div>
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#js%E4%B8%ADhistory%E7%9B%B8%E5%85%B3API%E6%99%AE%E5%8F%8A"><span class="nav-number">1.</span> <span class="nav-text">js中history相关API普及</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#history-state"><span class="nav-number">1.1.</span> <span class="nav-text">history.state</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#history-pushState-state-title-url"><span class="nav-number">1.2.</span> <span class="nav-text">history.pushState(state, title, url)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#history-replaceState-state-title-url"><span class="nav-number">1.3.</span> <span class="nav-text">history.replaceState(state, title, url)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#window-onpopstate"><span class="nav-number">1.4.</span> <span class="nav-text">window.onpopstate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E6%80%A7%E5%88%A4%E6%96%AD"><span class="nav-number">1.5.</span> <span class="nav-text">支持性判断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">相关代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">兼容性</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xiong"
+      src="/images/my_avatar.gif">
+  <p class="site-author-name" itemprop="name">Xiong</p>
+  <div class="site-description" itemprop="description">点点滴滴 重在积累</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">136</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://xqmgithub.github.io/ajaxHistory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/my_avatar.gif">
+      <meta itemprop="name" content="Xiong">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点点滴滴">
+      <meta itemprop="description" content="点点滴滴 重在积累">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ajax无刷新页面切换,历史记录后退前进解决方案 | 点点滴滴">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ajax无刷新页面切换,历史记录后退前进解决方案
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-26 14:10:31" itemprop="dateCreated datePublished" datetime="2018-02-26T14:10:31+08:00">2018-02-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>我们在工作中常常遇到需要用ajax来显示下一页和上一页，ajax无刷新页面，因此，假如你想通过浏览器的历史记录返回上一页和下一页。那这就问题来了！一般需求要历史返回的时候，我们通常不使用ajax。但是呢，假如一个页面中，只有一个地方是动态的，其他地方都是固定的，除了使用模板之外，那么就是使用ajax来操作显得格外方便！那么如何解决ajax历史记录的返回和前进呢？</p>
+<span id="more"></span>
+
+<h2 id="js中history相关API普及"><a href="#js中history相关API普及" class="headerlink" title="js中history相关API普及"></a>js中history相关API普及</h2><h3 id="history-state"><a href="#history-state" class="headerlink" title="history.state"></a>history.state</h3><p>当前URL下对应的状态信息。如果当前URL不是通过pushState或者replaceState产生的，那么history.state是null。</p>
+<h3 id="history-pushState-state-title-url"><a href="#history-pushState-state-title-url" class="headerlink" title="history.pushState(state, title, url)"></a>history.pushState(state, title, url)</h3><p>将当前URL和history.state加入到history中，并用新的state和URL替换当前。不会造成页面刷新。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">state：与要跳转到的URL对应的状态信息。</span><br><span class="line"></span><br><span class="line">title：页面的题目,假如没有就穿空字符串就可以。</span><br><span class="line"></span><br><span class="line">url：要跳转到的URL地址，不能跨域。</span><br></pre></td></tr></table></figure>
+<h3 id="history-replaceState-state-title-url"><a href="#history-replaceState-state-title-url" class="headerlink" title="history.replaceState(state, title, url)"></a>history.replaceState(state, title, url)</h3><p>用新的state和URL替换当前。不会造成页面刷新。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">state：与要跳转到的URL对应的状态信息。</span><br><span class="line"></span><br><span class="line">title：页面的题目,假如没有就穿空字符串就可以。</span><br><span class="line"></span><br><span class="line">url：要跳转到的URL地址，不能跨域。</span><br></pre></td></tr></table></figure>
+<h3 id="window-onpopstate"><a href="#window-onpopstate" class="headerlink" title="window.onpopstate"></a>window.onpopstate</h3><p>history.go和history.back（包括用户按浏览器历史前进后退按钮）触发，并且页面无刷的时候（由于使用pushState修改了history）会触发popstate事件，事件发生时浏览器会从history中取出URL和对应的state对象替换当前的URL和history.state。通过event.state也可以获取history.state。</p>
+<h3 id="支持性判断"><a href="#支持性判断" class="headerlink" title="支持性判断"></a>支持性判断</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if (&#x27;pushState&#x27; in history) &#123;...&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h2><p>假如我们动态的html代码id是MyDiv。<br>定义如下函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function processAjaxData(obj, url)&#123;</span><br><span class="line">     document.getElementById(&quot;MyDiv&quot;).innerHTML = obj.html;</span><br><span class="line">     document.title = obj.pageTitle;</span><br><span class="line"> window.history.pushState(&#123;&quot;html&quot;:obj.html,&quot;pageTitle&quot;:obj.pageTitle&#125;,&quot;&quot;, url);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>obj是后台ajax返回来的数据,obj.html来替换动态haorooms下面的内容，页面标题是返回的pageTitle标题。</p>
+<p>而当有浏览者点击浏览器“后退”或“前进”按钮时，我们用下面的代码来响应用户的操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">window.onpopstate = function(event)&#123;</span><br><span class="line">    if(event.state)&#123;</span><br><span class="line">        document.getElementById(&quot;haorooms&quot;).innerHTML = event.state.html;</span><br><span class="line">        document.title = event.state.pageTitle;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h2><p>谷歌浏览器，火狐浏览器，Safafi浏览器、IE10+等现代浏览器都支持这种技术。假如你感兴趣，可以试试！</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Ajax/" rel="tag"># Ajax</a>
+              <a href="/tags/%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95/" rel="tag"># 历史记录</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/batchSql/" rel="prev" title="mysql批量执行sql文件">
+                  <i class="fa fa-angle-left"></i> mysql批量执行sql文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/eyeColor/" rel="next" title="护眼的绿豆沙参数">
+                  护眼的绿豆沙参数 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="lv-container" data-id="city" data-uid="MTAyMC8zMzY4Ny8xMDI0Mg=="></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Xiong</span>
+  </div><script type="text/javascript" src="/js/custom/love.js"></script>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+<script src="/js/third-party/comments/livere.js"></script>
+
+</body>
+</html>
